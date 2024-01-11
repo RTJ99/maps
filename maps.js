@@ -107,7 +107,7 @@ function getGeoData() {
     let locationID = location.querySelector("#locationID").value;
 
     let featureItems = location.querySelectorAll('.collection-list .feature-item');
-    
+ 
     let features = [];
     
   
@@ -116,7 +116,7 @@ function getGeoData() {
     if (!uniqueCountries.includes(country)) {
       uniqueCountries.push(country);
     }
-    
+    console.log(uniqueCountries,"poi")
 
     featureItems.forEach(function (item) {
       let text = item.querySelector('div:nth-child(2)').textContent;
