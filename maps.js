@@ -107,8 +107,7 @@ function getGeoData() {
     let locationID = location.querySelector("#locationID").value;
 
     let featureItems = location.querySelectorAll('.collection-list .feature-item');
-    totalFeatureItems += featureItems.length;
-   console.log('Total number of feature items:', totalFeatureItems);
+    
     let features = [];
     
   
@@ -320,7 +319,15 @@ function toggleSidebar(id) {
   elem.classList.remove('collapsed');
   elem.style.display = "block";
 }
+let totalFeatureItems = 0;
 
+// Loop through each location and count feature items
+listLocations.forEach(function (location) {
+    let featureItems = location.querySelectorAll('.collection-list .feature-item');
+    totalFeatureItems += featureItems.length;
+});
+
+console.log('Total number of feature items:', totalFeatureItems);
 
 function filterMapFeatures(selectedFeatureText) {
 
