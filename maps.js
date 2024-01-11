@@ -107,7 +107,8 @@ function getGeoData() {
     let locationID = location.querySelector("#locationID").value;
 
     let featureItems = location.querySelectorAll('.collection-list .feature-item');
- 
+    totalFeatureItems += featureItems.length;
+   console.log('Total number of feature items:', totalFeatureItems);
     let features = [];
     
   
