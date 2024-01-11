@@ -1,5 +1,20 @@
 $(function () {
 
+ $('#clearFiltersButton').on('click', function () {
+        // Clear selected features and countries
+        $('.featureCheckbox:checked').prop('checked', false);
+        $('#countryDropdown').val(null).trigger('change');
+
+        // Clear filters on the map
+        map.setFilter("locations", ["any"]);
+
+        // Optionally, you can reapply default filters or do other actions
+        // ...
+
+        // Update the map
+        map.setFilter("locations", ["any"]);
+    });
+
 $('#countryDropdown').select2({
 placeholder: 'Choose Countries',
 allowClear: true,
