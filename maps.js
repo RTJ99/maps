@@ -1,20 +1,5 @@
 $(function () {
 
- $('#clearFiltersButton').on('click', function () {
-        // Clear selected features and countries
-        $('.featureCheckbox:checked').prop('checked', false);
-        $('#countryDropdown').val(null).trigger('change');
-
-        // Clear filters on the map
-        map.setFilter("locations", ["any"]);
-
-        // Optionally, you can reapply default filters or do other actions
-        // ...
-
-        // Update the map
-        map.setFilter("locations", ["any"]);
-    });
-
 $('#countryDropdown').select2({
 placeholder: 'Choose Countries',
 allowClear: true,
@@ -342,6 +327,18 @@ countryDropdown.append($('<option>', {
     elem.classList.remove('collapsed');
     elem.style.display = "block";
     }
+
+function clearFilters() {
+    const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
+    checkboxes.forEach(function (checkbox) {
+    checkbox.checked = false;
+    }
+    );
+
+    const countryDropdown = document.getElementById('countryDropdown');
+    countryDropdown.value = null;
+    countryDropdown.dispatchEvent(new Event('change'));
+}
 
 
     function filterMapFeatures(selectedFeatureText) {
