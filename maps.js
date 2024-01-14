@@ -250,15 +250,7 @@ countryDropdown.append($('<option>', {
     properties: {
     id: "william-kamkwamba",
     description:
-    "<div class=\"w-embed\"><input type=\"hidden\" id=\"locationID\" value=\"william-kamkwamba\">\n<input
-            type=\"hidden\" id=\"locationLatitude\" value=\"13.2543\">\n<input type=\"hidden\" id=\"locationLongitude\"
-            value=\"34.3015\"></div>
-    <div class=\"locations-map_name\">
-        <div class=\"text-block\">William Kamkwamba</div>
-    </div>
-    <div class=\"locations-map_population-wrapper\">
-        <div>Malawi</div>
-    </div>",
+    "description",
     arrayID: 0,
     features: ["Renewable Energy"],
     },
