@@ -321,33 +321,27 @@ countryDropdown.append($('<option>', {
         });
     });
 
-    // Individual point click event
-    map.on("click", "unclustered-point", function (e) {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const description = e.features[0].properties.description;
+  map.on("click", "unclustered-point", function (e) {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const description = e.features[0].properties.description;
 
-        new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
-    });
-      addPopup(e);
-        $(".locations-map_wrapper").addClass("is--show");
+    // Adjust the fixed zoom level according to your preference
+    const fixedZoomLevel = 10;
 
-    if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
-    }
-
-    $(".locations-map_item").eq(ID).addClass("is--show");
-    });
-
-    map.on("click", "locations", (e) => {
     map.flyTo({
-    center: e.features[0].geometry.coordinates,
-    speed: 0.5,
-    curve: 1,
-    easing(t) {
-    return t;
-    },
+        center: coordinates,
+        zoom: fixedZoomLevel,
+        speed: 0.5,
+        curve: 1,
+        easing: t => t,
     });
-    });
+
+    // Show the popup
+    new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+
+    // Show the associated div
+    $(".locations-map_wrapper").addClass("is--show");
+});
 
 
     // Set cursor style on hover
