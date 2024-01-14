@@ -203,7 +203,7 @@ countryDropdown.append($('<option>', {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
     }
 
-    // Individual point click event
+  // Individual point click event
 map.on("click", "unclustered-point", function (e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const description = e.features[0].properties.description;
@@ -220,11 +220,21 @@ map.on("click", "unclustered-point", function (e) {
     });
 
     // Show the popup
-    new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+    addPopup(e);
 
     // Show the associated div
     $(".locations-map_wrapper").addClass("is--show");
+
+    // Check if an item is currently there
+    if ($(".locations-map_item.is--show").length) {
+        $(".locations-map_item").removeClass("is--show");
+    }
+
+    // Find collection item by array ID and show it
+    const ID = e.features[0].properties.arrayID;
+    $(".locations-map_item").eq(ID).addClass("is--show");
 });
+
 
     map.on("mouseenter", "locations", () => {
     map.getCanvas().style.cursor = "pointer";
