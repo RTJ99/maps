@@ -203,32 +203,38 @@ countryDropdown.append($('<option>', {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
     }
 
-    map.on("click", "locations", (e) => {
+  // Individual point click event
+map.on("click", "unclustered-point", function (e) {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const description = e.features[0].properties.description;
 
-    const ID = e.features[0].properties.arrayID;
+    // Adjust the fixed zoom level according to your preference
+    const fixedZoomLevel = 10;
 
+    map.flyTo({
+        center: coordinates,
+        zoom: fixedZoomLevel,
+        speed: 0.5,
+        curve: 1,
+        easing: t => t,
+    });
+
+    // Show the popup
     addPopup(e);
-    closeSidebar();
 
+    // Show the associated div
     $(".locations-map_wrapper").addClass("is--show");
 
+    // Check if an item is currently there
     if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
+        $(".locations-map_item").removeClass("is--show");
     }
 
+    // Find collection item by array ID and show it
+    const ID = e.features[0].properties.arrayID;
     $(".locations-map_item").eq(ID).addClass("is--show");
-    });
+});
 
-    map.on("click", "locations", (e) => {
-    map.flyTo({
-    center: e.features[0].geometry.coordinates,
-    speed: 0.5,
-    curve: 1,
-    easing(t) {
-    return t;
-    },
-    });
-    });
 
     map.on("mouseenter", "locations", () => {
     map.getCanvas().style.cursor = "pointer";
@@ -239,59 +245,147 @@ countryDropdown.append($('<option>', {
     });
     }
 
-    map.on("load", function (e) {
-
-    const defaultFeature = {
-    type: "Feature",
-    geometry: {
-    type: "Point",
-    coordinates: ["34.3015", "13.2543"],
-    },
-    properties: {
-    id: "william-kamkwamba",
-    description:
-    "description",
-    arrayID: 0,
-    features: ["Renewable Energy"],
-    },
-    };
-
-    mapLocations.features.push(defaultFeature);
-
-    addMapPoints();
-
+  map.on("load", function () {
+    // Add a new source from your GeoJSON data and set the 'cluster' option to true.
+    map.addSource("locations", {
+        type: "geojson",
+        data: mapLocations,
+        cluster: true,
+        clusterMaxZoom: 7,
+        clusterRadius: 50,
     });
 
-    $(".close-block").click(function () {
-    $(".locations-map_wrapper").removeClass("is--show");
+    // Add clusters layer
+    map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "locations",
+        filter: ["has", "point_count"],
+        paint: {
+            "circle-color": [
+                "step",
+                ["get", "point_count"],
+                "#51bbd6",
+                100,
+                "#f1f075",
+                750,
+                "#f28cb1",
+            ],
+            "circle-radius": [
+                "step",
+                ["get", "point_count"],
+                20,
+                100,
+                30,
+                750,
+                40,
+            ],
+        },
     });
 
-
-    const popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false,
+    // Add cluster count layer
+    map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "locations",
+        filter: ["has", "point_count"],
+        layout: {
+            "text-field": ["get", "point_count_abbreviated"],
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            "text-size": 12,
+        },
     });
 
-    map.on('mouseenter', 'locations', (e) => {
+    // Add individual point layer
+    map.addLayer({
+        id: "unclustered-point",
+        type: "circle",
+        source: "locations",
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+            "circle-color": "#AA000D",
+            "circle-radius": 8,
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#ffffff",
+        },
+    });
 
-    map.getCanvas().style.cursor = 'pointer';
+    // Cluster click event
+    map.on("click", "clusters", function (e) {
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: ["clusters"],
+        });
+        const clusterId = features[0].properties.cluster_id;
 
+        map.getSource("locations").getClusterExpansionZoom(clusterId, function (err, zoom) {
+            if (err) return;
 
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const description = e.features[0].properties.description;
+            map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom,
+            });
+        });
+    });
 
+  map.on("click", "locations", (e) => {
+    const features = e.features;
 
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    // Check if the clicked features are clusters
+    const isCluster = features[0].properties.cluster;
+
+    if (isCluster) {
+        // Handle clustered points here
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('locations').getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err) return;
+
+            map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom,
+                speed: 0.5,
+                curve: 1,
+                easing(t) {
+                    return t;
+                },
+            });
+        });
+    } else {
+        // Handle unclustered points here
+        const ID = features[0].properties.arrayID;
+        addPopup(e);
+        closeSidebar();
+
+        $(".locations-map_wrapper").addClass("is--show");
+
+        if ($(".locations-map_item.is--show").length) {
+            $(".locations-map_item").removeClass("is--show");
+        }
+
+        $(".locations-map_item").eq(ID).addClass("is--show");
+
+        map.flyTo({
+            center: features[0].geometry.coordinates,
+            speed: 0.5,
+            curve: 1,
+            easing(t) {
+                return t;
+            },
+        });
     }
+});
 
-    popup.setLngLat(coordinates).setHTML(description).addTo(map);
+
+
+    // Set cursor style on hover
+    map.on("mouseenter", "clusters", function () {
+        map.getCanvas().style.cursor = "pointer";
     });
 
-    map.on('mouseleave', 'locations', () => {
-    map.getCanvas().style.cursor = '';
-    popup.remove();
+    map.on("mouseleave", "clusters", function () {
+        map.getCanvas().style.cursor = "";
     });
+});
+
     function showCollectionItemAndPopup(ID) {
 
 
