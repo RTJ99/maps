@@ -321,7 +321,8 @@ map.on("load", function () {
       });
   });
 
-  map.on("click", "unclustered-point", function (e) {
+  // Individual point click event
+map.on("click", "unclustered-point", function (e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const description = e.features[0].properties.description;
 
@@ -329,11 +330,11 @@ map.on("load", function () {
     const fixedZoomLevel = 10;
 
     map.flyTo({
-      center: coordinates,
-      zoom: fixedZoomLevel,
-      speed: 0.5,
-      curve: 1,
-      easing: (t) => t,
+        center: coordinates,
+        zoom: fixedZoomLevel,
+        speed: 0.5,
+        curve: 1,
+        easing: (t) => t,
     });
 
     // Show the popup
@@ -341,41 +342,27 @@ map.on("load", function () {
 
     // Show the associated div
     $(".locations-map_wrapper").addClass("is--show");
-  });
 
-  // Set cursor style on hover
-  map.on("mouseenter", "clusters", function () {
-    map.getCanvas().style.cursor = "pointer";
-  });
+    // Check if an item is currently there
+    if ($(".locations-map_item.is--show").length) {
+        $(".locations-map_item").removeClass("is--show");
+    }
 
-  map.on("mouseleave", "clusters", function () {
-    map.getCanvas().style.cursor = "";
-  });
+    // Find collection item by array ID and show it
+    const ID = e.features[0].properties.arrayID;
+    showCollectionItemAndPopup(ID);
 });
 
 function showCollectionItemAndPopup(ID) {
-  $(".locations-map_wrapper").addClass("is--show");
+    // Show webflow Collection module
+    $(".locations-map_wrapper").addClass("is--show");
 
-  if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
-  }
-
-  $(".locations-map_item").eq(ID).addClass("is--show");
-}
-function toggleSidebar(id) {
-  const elem = document.getElementById(id);
-  const collapsed = elem.classList.toggle("collapsed");
-  const padding = {};
-
-  padding[id] = collapsed ? 0 : 300;
-
-  map.easeTo({
-    padding: padding,
-    duration: 1000,
-  });
-
-  elem.classList.remove("collapsed");
-  elem.style.display = "block";
+    // Check if an item is currently there
+    if ($(".locations-map_item.is--show").length) {
+        $(".locations-map_item").removeClass("is--show");
+    }
+    // Find collection item by array ID and show it
+    $(".locations-map_item").eq(ID).addClass("is--show");
 }
 
 function clearFilters() {
