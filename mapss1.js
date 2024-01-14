@@ -68,116 +68,50 @@ function applyFilters() {
     map.setFilter("locations", filterCondition);
 }
 
-    $(".locations-map_wrapper").removeClass("is--show");
+$(".locations-map_wrapper").removeClass("is--show");
 
+mapboxgl.accessToken = "pk.eyJ1IjoiM3JkY2l0eSIsImEiOiJjbHFjMThzNmswMG81MmlwNHp4am1kaTB6In0.rC8jN0vCOiwyZkm_5mSlmA";
 
-    mapboxgl.accessToken = "pk.eyJ1IjoiM3JkY2l0eSIsImEiOiJjbHFjMThzNmswMG81MmlwNHp4am1kaTB6In0.rC8jN0vCOiwyZkm_5mSlmA";
-
-
-    let mapLocations = {
+let mapLocations = {
     type: "FeatureCollection",
     features: [],
-    };
+};
 
-    let uniqueFeatureTexts = new Set();
-
-    let map = new mapboxgl.Map({
+let uniqueFeatureTexts = new Set();
+let uniqueCountries = [];
+let map = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/3rdcity/clpu4fl3101fm01poerow0xuy",
     center: [16.29, 1.97],
     zoom: 4,
-    });
+});
 
+map.addControl(new mapboxgl.NavigationControl());
 
-    let mq = window.matchMedia("(min-width: 480px)");
-    if (mq.matches) {
-    map.setZoom(4);
-    } else {
-    map.setZoom(4);
-    }
+let listLocations = document.getElementById("location-list").childNodes;
 
-    map.addControl(new mapboxgl.NavigationControl());
-
-
-    let listLocations = document.getElementById("location-list").childNodes;
-
-    let uniqueCountries = [];
-    function getGeoData() {
-
+function getGeoData() {
     uniqueFeatureTexts.clear();
     uniqueCountries = [];
 
     listLocations.forEach(function (location, i) {
-    let locationLat = location.querySelector("#locationLatitude").value;
-    let locationLong = location.querySelector("#locationLongitude").value;
-    let locationInfo = location.querySelector(".locations-map_card").innerHTML;
-    let coordinates = [locationLong, locationLat];
-    let locationID = location.querySelector("#locationID").value;
-
-    let featureItems = location.querySelectorAll('.collection-list .feature-item');
-
-    let features = [];
-
-
-    let country = $(location).find(".locations-map_population-wrapper div").text().trim();
-
-    if (!uniqueCountries.includes(country)) {
-    uniqueCountries.push(country);
-    }
-    console.log(uniqueCountries,"poi")
-
-    featureItems.forEach(function (item) {
-    let text = item.querySelector('div:nth-child(2)').textContent;
-    features.push(text);
-
-    if (!uniqueFeatureTexts.has(text)) {
-    uniqueFeatureTexts.add(text);
-
-
-    }
+        //... (your existing code for fetching geo data)
     });
+}
 
-    let arrayID = i;
-
-    let geoData = {
-    type: "Feature",
-    geometry: {
-    type: "Point",
-    coordinates: coordinates,
-    },
-    properties: {
-    id: locationID,
-    description: locationInfo,
-    arrayID: arrayID,
-    features: features,
-    country: country,
-    },
-    };
-
-
-    if (!mapLocations.features.some(existingGeoData => JSON.stringify(existingGeoData) === JSON.stringify(geoData))) {
-    mapLocations.features.push(geoData);
-    }
-    });
-
-    }
-    function closeSidebar() {
+function closeSidebar() {
     const leftSidebar = document.getElementById('left');
-    if (leftSidebar.classList.contains('collapsed')) {
-    return;
+    if (!leftSidebar.classList.contains('collapsed')) {
+        leftSidebar.classList.add('collapsed');
+        const padding = { left: '-180px' };
+        map.easeTo({
+            padding: padding,
+            duration: 1000,
+        });
     }
+}
 
-    leftSidebar.classList.add('collapsed');
-
-    const padding = { left: '-180px' };
-    map.easeTo({
-    padding: padding,
-    duration: 1000,
-    });
-    }
-
-
-    getGeoData();
+getGeoData();
 
     function addMapPoints() {
 
@@ -427,11 +361,7 @@ function clearFilters() {
     mapboxgl.accessToken = "pk.eyJ1IjoiM3JkY2l0eSIsImEiOiJjbHFjMThzNmswMG81MmlwNHp4am1kaTB6In0.rC8jN0vCOiwyZkm_5mSlmA";
 
 
-    let mapLocations = {
-    type: "FeatureCollection",
-    features: [],
-    };
-
+    
     let uniqueFeatureTexts = new Set();
 
     let map = new mapboxgl.Map({
@@ -712,64 +642,51 @@ map.on("click", "unclustered-point", function (e) {
 });
 
     function showCollectionItemAndPopup(ID) {
-
-
     $(".locations-map_wrapper").addClass("is--show");
 
-
     if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
+        $(".locations-map_item").removeClass("is--show");
     }
 
     $(".locations-map_item").eq(ID).addClass("is--show");
-    }
-    function toggleSidebar(id) {
+}
+
+function toggleSidebar(id) {
     const elem = document.getElementById(id);
     const collapsed = elem.classList.toggle('collapsed');
     const padding = {};
-
     padding[id] = collapsed ? 0 : 300;
-
     map.easeTo({
-    padding: padding,
-    duration: 1000
+        padding: padding,
+        duration: 1000
     });
-
     elem.classList.remove('collapsed');
     elem.style.display = "block";
-    }
+}
 
 function clearFilters() {
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
     checkboxes.forEach(function (checkbox) {
-    checkbox.checked = false;
-    }
-    );
+        checkbox.checked = false;
+    });
 
     const countryDropdown = document.getElementById('countryDropdown');
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 }
 
-
-    function filterMapFeatures(selectedFeatureText) {
-
+function filterMapFeatures(selectedFeatureText) {
     const filteredFeatures = mapLocations.features.filter(feature =>
-    feature.properties.features.includes(selectedFeatureText)
+        feature.properties.features.includes(selectedFeatureText)
     );
 
     map.setFilter("locations", ["in", selectedFeatureText, ["get", "features"]]);
 
     if (filteredFeatures.length > 0) {
-    const ID = filteredFeatures[0].properties.arrayID;
-
-
-    toggleSidebar("left");
-
-
-    showCollectionItemAndPopup(ID);
+        const ID = filteredFeatures[0].properties.arrayID;
+        toggleSidebar("left");
+        showCollectionItemAndPopup(ID);
     } else {
-
-    toggleSidebar("left");
+        toggleSidebar("left");
     }
-    }
+}
