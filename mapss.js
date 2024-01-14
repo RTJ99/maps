@@ -1,76 +1,47 @@
 $(function () {
-// something
-$('#countryDropdown').select2({
-placeholder: 'Choose Countries',
-allowClear: true,
-});
-
-const checkboxContainer = $('#checkboxContainer');
-
-uniqueFeatureTexts.forEach(function (text, index) {
-
-const checkboxId = `featureCheckbox${index + 1}`;
-
-checkboxContainer.append(`
-<label>
-    <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
-</label>
-`);
-
-const isChecked = map.getFilter("locations") && map.getFilter("locations").includes(text);
-$(`#${checkboxId}`).prop('checked', isChecked);
-});
-
-const countryDropdown = $('#countryDropdown');
-uniqueCountries.forEach(function (country) {
-countryDropdown.append($('<option>', {
-    value: country,
-    text: country
-    }));
+    // Initialize Select2 for country dropdown
+    $('#countryDropdown').select2({
+        placeholder: 'Choose Countries',
+        allowClear: true,
     });
 
+    // Container for feature checkboxes
+    const checkboxContainer = $('#checkboxContainer');
+
+    // Add checkboxes for each unique feature
+    uniqueFeatureTexts.forEach(function (text, index) {
+        const checkboxId = `featureCheckbox${index + 1}`;
+        const isChecked = map.getFilter("locations") && map.getFilter("locations").includes(text);
+
+        // Append checkbox to container
+        checkboxContainer.append(`
+            <label>
+                <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
+            </label>
+        `);
+
+        // Set checkbox state based on map filter
+        $(`#${checkboxId}`).prop('checked', isChecked);
+    });
+
+    // Populate country dropdown
+    const countryDropdown = $('#countryDropdown');
+    uniqueCountries.forEach(function (country) {
+        countryDropdown.append($('<option>', {
+            value: country,
+            text: country,
+        }));
+    });
+
+    // Event handlers for checkbox and dropdown changes
     checkboxContainer.on('change', '.featureCheckbox', applyFilters);
     countryDropdown.on('change', applyFilters);
-    });
-
-    $(function () {
-// something
-$('#countryDropdown').select2({
-placeholder: 'Choose Countries',
-allowClear: true,
 });
 
-const checkboxContainer = $('#checkboxContainer');
-
-uniqueFeatureTexts.forEach(function (text, index) {
-
-const checkboxId = `featureCheckbox${index + 1}`;
-
-checkboxContainer.append(`
-<label>
-    <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
-</label>
-`);
-
-const isChecked = map.getFilter("locations") && map.getFilter("locations").includes(text);
-$(`#${checkboxId}`).prop('checked', isChecked);
-});
-
-const countryDropdown = $('#countryDropdown');
-uniqueCountries.forEach(function (country) {
-countryDropdown.append($('<option>', {
-    value: country,
-    text: country
-    }));
-    });
-
-    checkboxContainer.on('change', '.featureCheckbox', applyFilters);
-    countryDropdown.on('change', applyFilters);
-    });
-
-    function applyFilters() {
+// Function to apply filters based on selected features and countries
+function applyFilters() {
     const selectedFeatures = $('.featureCheckbox:checked').map(function () {
-    return $(this).val();
+        return $(this).val();
     }).get();
 
     const selectedCountries = $('#countryDropdown').val();
@@ -78,23 +49,25 @@ countryDropdown.append($('<option>', {
     let filterCondition = ["any"];
 
     if (selectedFeatures.length > 0) {
-    const featuresFilter = ["any"];
-    selectedFeatures.forEach(function (selectedFeature) {
-    featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
-    });
-    filterCondition.push(featuresFilter);
+        const featuresFilter = ["any"];
+        selectedFeatures.forEach(function (selectedFeature) {
+            featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+        });
+        filterCondition.push(featuresFilter);
     }
 
     if (selectedCountries && selectedCountries.length > 0) {
-    const countriesFilter = ["any"];
-    selectedCountries.forEach(function (selectedCountry) {
-    countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
-    });
-    filterCondition.push(countriesFilter);
+        const countriesFilter = ["any"];
+        selectedCountries.forEach(function (selectedCountry) {
+            countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
+        });
+        filterCondition.push(countriesFilter);
     }
 
+    // Set the map filter based on selected features and countries
     map.setFilter("locations", filterCondition);
-    }
+}
+
     $(".locations-map_wrapper").removeClass("is--show");
 
 
@@ -602,7 +575,7 @@ map.on("click", "unclustered-point", function (e) {
     map.flyTo({
         center: coordinates,
         zoom: fixedZoomLevel,
-        speed: 0.5,
+        speed: 2,
         curve: 1,
         easing: t => t,
     });
