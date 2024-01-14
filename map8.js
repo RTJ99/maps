@@ -327,7 +327,7 @@ map.on("click", "unclustered-point", function (e) {
         });
     });
 
-  map.on("click", "locations", (e) => {
+ map.on("click", "locations", (e) => {
     const features = e.features;
 
     // Check if the clicked features are clusters
@@ -352,17 +352,19 @@ map.on("click", "unclustered-point", function (e) {
     } else {
         // Handle unclustered points here
         const ID = features[0].properties.arrayID;
+
+        console.log("Clicked on unclustered point with ID:", ID);
+
         addPopup(e);
         closeSidebar();
 
+        // Use jQuery to show the sidebar
         $(".locations-map_wrapper").addClass("is--show");
 
-        if ($(".locations-map_item.is--show").length) {
-            $(".locations-map_item").removeClass("is--show");
-        }
+        // Remove 'is--show' class from all items, then add it to the clicked item
+        $(".locations-map_item").removeClass("is--show").eq(ID).addClass("is--show");
 
-        $(".locations-map_item").eq(ID).addClass("is--show");
-
+        // Fly to the clicked point on the map
         map.flyTo({
             center: features[0].geometry.coordinates,
             speed: 0.5,
@@ -373,6 +375,7 @@ map.on("click", "unclustered-point", function (e) {
         });
     }
 });
+
 
 
 
