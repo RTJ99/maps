@@ -321,15 +321,26 @@ countryDropdown.append($('<option>', {
     }
 
 function clearFilters() {
+    // Clear checkboxes
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
     checkboxes.forEach(function (checkbox) {
-    checkbox.checked = false;
-    }
-    );
+        checkbox.checked = false;
+    });
 
+    // Clear country dropdown
     const countryDropdown = document.getElementById('countryDropdown');
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
+
+    // Clear map filters
+    map.setFilter("locations", ["any"]);
+
+    // Optionally, you can reset the map zoom and center
+    map.easeTo({
+        center: [16.29, 1.97],
+        zoom: 4,
+        duration: 1000
+    });
 }
 
 
