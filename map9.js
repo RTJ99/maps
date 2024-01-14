@@ -327,56 +327,27 @@ map.on("click", "unclustered-point", function (e) {
         });
     });
 
- map.on("click", "locations", (e) => {
-    const features = e.features;
+  map.on("click", "unclustered-point", function (e) {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const description = e.features[0].properties.description;
 
-    // Check if the clicked features are clusters
-    const isCluster = features[0].properties.cluster;
+    // Adjust the fixed zoom level according to your preference
+    const fixedZoomLevel = 10;
 
-    if (isCluster) {
-        // Handle clustered points here
-        const clusterId = features[0].properties.cluster_id;
-        map.getSource('locations').getClusterExpansionZoom(clusterId, (err, zoom) => {
-            if (err) return;
+    map.flyTo({
+        center: coordinates,
+        zoom: fixedZoomLevel,
+        speed: 0.5,
+        curve: 1,
+        easing: t => t,
+    });
 
-            map.easeTo({
-                center: features[0].geometry.coordinates,
-                zoom: zoom,
-                speed: 0.5,
-                curve: 1,
-                easing(t) {
-                    return t;
-                },
-            });
-        });
-    } else {
-        // Handle unclustered points here
-        const ID = features[0].properties.arrayID;
+    // Show the popup
+    new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
 
-        console.log("Clicked on unclustered point with ID:", ID);
-
-        addPopup(e);
-        closeSidebar();
-
-        // Use jQuery to show the sidebar
-        $(".locations-map_wrapper").addClass("is--show");
-
-        // Remove 'is--show' class from all items, then add it to the clicked item
-        $(".locations-map_item").removeClass("is--show").eq(ID).addClass("is--show");
-
-        // Fly to the clicked point on the map
-        map.flyTo({
-            center: features[0].geometry.coordinates,
-            speed: 0.5,
-            curve: 1,
-            easing(t) {
-                return t;
-            },
-        });
-    }
+    // Show the associated div
+    $(".locations-map_wrapper").addClass("is--show");
 });
-
-
 
 
     // Set cursor style on hover
