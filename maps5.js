@@ -245,7 +245,7 @@ countryDropdown.append($('<option>', {
         type: "geojson",
         data: mapLocations,
         cluster: true,
-        clusterMaxZoom: 14,
+        clusterMaxZoom: 7,
         clusterRadius: 50,
     });
 
