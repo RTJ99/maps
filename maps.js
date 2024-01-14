@@ -1,5 +1,5 @@
 $(function () {
-
+// something
 $('#countryDropdown').select2({
 placeholder: 'Choose Countries',
 allowClear: true,
