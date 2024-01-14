@@ -213,28 +213,28 @@ function addMapPoints() {
     const fixedZoomLevel = 10;
 
     map.flyTo({
-      center: coordinates,
-      zoom: fixedZoomLevel,
-      speed: 0.5,
-      curve: 1,
-      easing: (t) => t,
+        center: coordinates,
+        zoom: fixedZoomLevel,
+        speed: 0.5,
+        curve: 1,
+        easing: (t) => t,
     });
 
     // Show the popup
-    addPopup(e);
+    new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
 
     // Show the associated div
     $(".locations-map_wrapper").addClass("is--show");
 
     // Check if an item is currently there
     if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
+        $(".locations-map_item").removeClass("is--show");
     }
 
     // Find collection item by array ID and show it
     const ID = e.features[0].properties.arrayID;
     $(".locations-map_item").eq(ID).addClass("is--show");
-  });
+});
 
   map.on("mouseenter", "locations", () => {
     map.getCanvas().style.cursor = "pointer";
