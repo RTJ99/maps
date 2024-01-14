@@ -328,6 +328,27 @@ countryDropdown.append($('<option>', {
 
         new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
     });
+      addPopup(e);
+        $(".locations-map_wrapper").addClass("is--show");
+
+    if ($(".locations-map_item.is--show").length) {
+    $(".locations-map_item").removeClass("is--show");
+    }
+
+    $(".locations-map_item").eq(ID).addClass("is--show");
+    });
+
+    map.on("click", "locations", (e) => {
+    map.flyTo({
+    center: e.features[0].geometry.coordinates,
+    speed: 0.5,
+    curve: 1,
+    easing(t) {
+    return t;
+    },
+    });
+    });
+
 
     // Set cursor style on hover
     map.on("mouseenter", "clusters", function () {
