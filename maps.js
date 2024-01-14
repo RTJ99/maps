@@ -1,4 +1,4 @@
-<script>$(function () {
+$(function () {
 
 $('#countryDropdown').select2({
 placeholder: 'Choose Countries',
@@ -362,4 +362,4 @@ function clearFilters() {
     toggleSidebar("left");
     }
     }
-</script>
+
