@@ -332,16 +332,23 @@ function clearFilters() {
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 
-    // Clear map filters
-    map.setFilter("locations", ["any"]);
+    // Check if no checkboxes are checked and no country is selected
+    const noFiltersApplied = checkboxes.length === 0 && countryDropdown.value === null;
 
-    // Optionally, you can reset the map zoom and center
-    map.easeTo({
-        center: [16.29, 1.97],
-        zoom: 4,
-        duration: 1000
-    });
+    // Clear map filters or reset to initial state
+    if (noFiltersApplied) {
+        // Reset map to initial state
+        map.easeTo({
+            center: [16.29, 1.97],
+            zoom: 4,
+            duration: 1000
+        });
+    } else {
+        // Clear map filters
+        map.setFilter("locations", ["any"]);
+    }
 }
+
 
 
     function filterMapFeatures(selectedFeatureText) {
