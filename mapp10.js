@@ -170,6 +170,22 @@ countryDropdown.append($('<option>', {
 
 
     getGeoData();
+function searchByName() {
+    const searchInput = document.getElementById('searchByName').value.toLowerCase();
+
+    const filteredFeatures = mapLocations.features.filter(feature =>
+        feature.properties.description.toLowerCase().includes(searchInput)
+    );
+
+    if (filteredFeatures.length > 0) {
+        const ID = filteredFeatures[0].properties.arrayID;
+
+        toggleSidebar("left");
+        showCollectionItemAndPopup(ID);
+    } else {
+        alert('No matching locations found.');
+    }
+}
 
     function addMapPoints() {
 
