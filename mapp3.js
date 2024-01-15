@@ -338,17 +338,26 @@ function resetMap() {
 
 
 function clearFilters() {
+    // Uncheck all checkboxes without simulating selecting all
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
     checkboxes.forEach(function (checkbox) {
-    checkbox.checked = false;
-    }
-    );
+        checkbox.checked = false;
+    });
 
+    // Reset country dropdown
     const countryDropdown = document.getElementById('countryDropdown');
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
-    resetMap();
+
+    // Simulate selecting all checkboxes without visually checking them
+    $(".featureCheckbox").prop("value", function () {
+        return $(this).val();
+    });
+
+    // Manually trigger applyFilters to simulate all filters selected
+    applyFilters();
 }
+
 
 
     function filterMapFeatures(selectedFeatureText) {
