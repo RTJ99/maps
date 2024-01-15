@@ -339,14 +339,13 @@ function clearFilters() {
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 
-    // Reset visibility of all features
-    mapLocations.features.forEach(feature => {
-        map.setFeatureState({ source: 'locations', id: feature.properties.id }, { visibility: 'visible' });
-    });
+    // Manually trigger applyFilters to simulate all filters selected
+    applyFilters();
 
     // Reset map to initial state
     resetMap();
 }
+
 
 
 
