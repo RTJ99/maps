@@ -327,10 +327,7 @@ function resetMap() {
     duration: 1000,
   });
 
-  // Simulate selecting all checkboxes without visually checking them
-  $(".featureCheckbox").prop("value", function () {
-    return $(this).val();
-  });
+ mapLocations.features = defaultMapLocations;
 
   // Manually trigger applyFilters to simulate all filters selected
   applyFilters();
@@ -338,7 +335,7 @@ function resetMap() {
 
 
 function clearFilters() {
-    // Uncheck all checkboxes without simulating selecting all
+    // Reset checkboxes
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
     checkboxes.forEach(function (checkbox) {
         checkbox.checked = false;
@@ -349,12 +346,13 @@ function clearFilters() {
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 
-    // Simulate selecting all checkboxes without visually checking them
-    $(".featureCheckbox").prop("value", function () {
-        return $(this).val();
-    });
+    // Reset the map to the default locations
+    mapLocations.features = defaultMapLocations;
 
-    // Manually trigger applyFilters to simulate all filters selected
+    // Update the map with the default locations
+    map.getSource('locations').setData(mapLocations);
+
+    // Reset the map using applyFilters
     applyFilters();
 }
 
