@@ -42,17 +42,15 @@ $(function () {
 });
 
 function applyFilters() {
-  const selectedFeatures = $(".featureCheckbox:checked")
-    .map(function () {
-      return $(this).val();
-    })
-    .get();
+  const selectedFeatures = $(".featureCheckbox:checked").map(function () {
+    return $(this).val();
+  }).get();
 
   const selectedCountries = $("#countryDropdown").val();
 
   let filterCondition = ["any"];
 
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+  if (selectedFeatures.length > 0) {
     const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
@@ -67,13 +65,10 @@ function applyFilters() {
     });
     filterCondition.push(countriesFilter);
   }
-  // Check if "All" is selected, and include all features
-  if (selectedFeatures.includes("all")) {
-    filterCondition = ["any"];
-  }
 
   map.setFilter("locations", filterCondition);
 }
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
