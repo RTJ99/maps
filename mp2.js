@@ -331,7 +331,7 @@ function clearFilters() {
     // Clear checkboxes
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
     checkboxes.forEach(function (checkbox) {
-        checkbox.checked = false;
+        checkbox.checked = true;
     });
 
     // Clear country dropdown
