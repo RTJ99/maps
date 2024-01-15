@@ -346,6 +346,12 @@ function clearFilters() {
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 
+    // Check at least one checkbox to avoid filtering out all features
+    const atLeastOneCheckbox = document.querySelector('.featureCheckbox');
+    if (atLeastOneCheckbox) {
+        atLeastOneCheckbox.checked = true;
+    }
+
     // Reset the map to the default locations
     mapLocations.features = defaultMapLocations;
 
@@ -355,6 +361,7 @@ function clearFilters() {
     // Reset the map using applyFilters
     applyFilters();
 }
+
 
 
 
