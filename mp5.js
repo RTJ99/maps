@@ -47,38 +47,38 @@ $(function () {
 });
 
 function applyFilters() {
-    const selectedFeatures = $('.featureCheckbox:checked').map(function () {
-        return $(this).val();
-    }).get();
+  const selectedFeatures = $(".featureCheckbox:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
 
-    const selectedCountries = $('#countryDropdown').val();
+  const selectedCountries = $("#countryDropdown").val();
 
-    let filterCondition = ["any"];
+  let filterCondition = ["any"];
 
-    if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-        const featuresFilter = ["any"];
-        selectedFeatures.forEach(function (selectedFeature) {
-            featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
-        });
-        filterCondition.push(featuresFilter);
-    }
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    const featuresFilter = ["any"];
+    selectedFeatures.forEach(function (selectedFeature) {
+      featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+    });
+    filterCondition.push(featuresFilter);
+  }
 
-    if (selectedCountries && selectedCountries.length > 0) {
-        const countriesFilter = ["any"];
-        selectedCountries.forEach(function (selectedCountry) {
-            countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
-        });
-        filterCondition.push(countriesFilter);
-    }
+  if (selectedCountries && selectedCountries.length > 0) {
+    const countriesFilter = ["any"];
+    selectedCountries.forEach(function (selectedCountry) {
+      countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
+    });
+    filterCondition.push(countriesFilter);
+  }
+  // Check if "All" is selected, and include all features
+  if (selectedFeatures.includes("all")) {
+    filterCondition = ["any"];
+  }
 
-    // Check if "All" is selected, and include all features
-    if (selectedFeatures.includes("all")) {
-        filterCondition = ["any"];
-    }
-
-    map.setFilter("locations", filterCondition);
+  map.setFilter("locations", filterCondition);
 }
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -333,6 +333,13 @@ function resetMap() {
     zoom: 4,
     duration: 1000,
   });
+
+  // Clear any applied filters
+  map.setFilter("locations", [
+    "in",
+    "nonexistent-feature",
+    ["get", "features"],
+  ]);
 }
 function clearFilters() {
   // Clear checkboxes
