@@ -51,7 +51,6 @@ function applyFilters() {
     const selectedCountries = $('#countryDropdown').val();
 
     let filterCondition = ["any"];
-    let showAllLocations = false;
 
     if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
         const featuresFilter = ["any"];
@@ -59,8 +58,6 @@ function applyFilters() {
             featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
         });
         filterCondition.push(featuresFilter);
-    } else if (selectedFeatures.includes("all")) {
-        showAllLocations = true;
     }
 
     if (selectedCountries && selectedCountries.length > 0) {
@@ -71,10 +68,13 @@ function applyFilters() {
         filterCondition.push(countriesFilter);
     }
 
-    if (showAllLocations) {
-        // Show all locations without applying specific filters
-        map.setFilter("locations", ["any"]);
+    // If "All" is selected, log and show points with vowels in the description
+    if (selectedFeatures.includes("all")) {
+        const vowelPoints = mapLocations.features.filter(feature => /[aeiou]/i.test(feature.properties.description));
+        console.log("Points with Vowels:", vowelPoints);
+        map.setFilter("locations", ["in", "id", ...vowelPoints.map(point => point.properties.id)]);
     } else {
+        // Show locations based on selected filters
         map.setFilter("locations", filterCondition);
     }
 }
