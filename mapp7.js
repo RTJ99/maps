@@ -259,7 +259,7 @@ countryDropdown.append($('<option>', {
     mapLocations.features.push(defaultFeature);
     console.log("Default List of Locations:", mapLocations.features);
     addMapPoints();
-
+    let defaultMapLocations = mapLocations.features;
     });
 
     $(".close-block").click(function () {
