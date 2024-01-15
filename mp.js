@@ -339,11 +339,10 @@ function clearFilters() {
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 
-    // Reload original map data
-    mapLocations = { ...originalMapLocations };
-
-    // Update the map source data
-    map.getSource('locations').setData(mapLocations.features);
+    // Reset visibility of all features
+    mapLocations.features.forEach(feature => {
+        map.setFeatureState({ source: 'locations', id: feature.properties.id }, { visibility: 'visible' });
+    });
 
     // Reset map to initial state
     resetMap();
