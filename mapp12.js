@@ -32,34 +32,44 @@ countryDropdown.append($('<option>', {
     checkboxContainer.on('change', '.featureCheckbox', applyFilters);
     countryDropdown.on('change', applyFilters);
     });
-
-    function applyFilters() {
+function applyFilters() {
     const selectedFeatures = $('.featureCheckbox:checked').map(function () {
-    return $(this).val();
+        return $(this).val();
     }).get();
 
     const selectedCountries = $('#countryDropdown').val();
 
     let filterCondition = ["any"];
 
-    if (selectedFeatures.length > 0) {
-    const featuresFilter = ["any"];
-    selectedFeatures.forEach(function (selectedFeature) {
-    featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
-    });
-    filterCondition.push(featuresFilter);
+    if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+        const featuresFilter = ["any"];
+        selectedFeatures.forEach(function (selectedFeature) {
+            featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+        });
+        filterCondition.push(featuresFilter);
     }
 
     if (selectedCountries && selectedCountries.length > 0) {
-    const countriesFilter = ["any"];
-    selectedCountries.forEach(function (selectedCountry) {
-    countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
-    });
-    filterCondition.push(countriesFilter);
+        const countriesFilter = ["any"];
+        selectedCountries.forEach(function (selectedCountry) {
+            countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
+        });
+        filterCondition.push(countriesFilter);
     }
 
     map.setFilter("locations", filterCondition);
+}
+checkboxContainer.on('change', '.featureCheckbox', function () {
+    // If "All" checkbox is checked, uncheck all other checkboxes
+    if ($(this).val() === 'all') {
+        $('.featureCheckbox').not(this).prop('checked', false);
+    } else {
+        // If any other checkbox is checked, uncheck the "All" checkbox
+        $('#allCheckbox').prop('checked', false);
     }
+    applyFilters();
+});
+
     $(".locations-map_wrapper").removeClass("is--show");
 
 
