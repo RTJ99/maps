@@ -335,11 +335,7 @@ function resetMap() {
   });
 
   // Clear any applied filters
-  map.setFilter("locations", [
-    "in",
-    "nonexistent-feature",
-    ["get", "features"],
-  ]);
+   $(".featureCheckbox").prop("checked", true);
 }
 function clearFilters() {
   // Clear checkboxes
