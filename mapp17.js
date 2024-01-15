@@ -31,18 +31,16 @@ $(function () {
     );
   });
 
-  checkboxContainer.on("change", ".featureCheckbox", applyFilters);
-    countryDropdown.on("change", applyFilters);
-    checkboxContainer.on("change", ".featureCheckbox", function () {
-      // If "All" checkbox is checked, uncheck all other checkboxes
-      if ($(this).val() === "all") {
-        $(".featureCheckbox").not(this).prop("checked", false);
-      } else {
-        // If any other checkbox is checked, uncheck the "All" checkbox
-        $("#allCheckbox").prop("checked", false);
-      }
-      applyFilters();
-    });
+  checkboxContainer.on('change', '.featureCheckbox', function () {
+    if ($(this).val() === 'all') {
+        // Uncheck other checkboxes when "All" is checked
+        $('.featureCheckbox').not(this).prop('checked', false);
+    } else {
+        // Uncheck the "All" checkbox when other checkboxes are checked
+        $('#allCheckbox').prop('checked', false);
+    }
+    applyFilters();
+});
 });
 
 function applyFilters() {
@@ -53,6 +51,7 @@ function applyFilters() {
     const selectedCountries = $('#countryDropdown').val();
 
     let filterCondition = ["any"];
+    let showAllLocations = false;
 
     if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
         const featuresFilter = ["any"];
@@ -60,6 +59,8 @@ function applyFilters() {
             featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
         });
         filterCondition.push(featuresFilter);
+    } else if (selectedFeatures.includes("all")) {
+        showAllLocations = true;
     }
 
     if (selectedCountries && selectedCountries.length > 0) {
@@ -70,13 +71,14 @@ function applyFilters() {
         filterCondition.push(countriesFilter);
     }
 
-    // Remove the existing filter if "All" is selected
-    if (selectedFeatures.includes("all")) {
-        filterCondition = ["any"];
+    if (showAllLocations) {
+        // Show all locations without applying specific filters
+        map.setFilter("locations", ["any"]);
+    } else {
+        map.setFilter("locations", filterCondition);
     }
-
-    map.setFilter("locations", filterCondition);
 }
+
 
 
 
