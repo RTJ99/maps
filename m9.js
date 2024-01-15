@@ -145,7 +145,7 @@ countryDropdown.append($('<option>', {
     country: country,
     },
     };
-
+    originalMapLocations = { ...mapLocations };
 
     if (!mapLocations.features.some(existingGeoData => JSON.stringify(existingGeoData) === JSON.stringify(geoData))) {
     mapLocations.features.push(geoData);
@@ -319,7 +319,14 @@ countryDropdown.append($('<option>', {
     elem.classList.remove('collapsed');
     elem.style.display = "block";
     }
-
+function resetMap() {
+    // Reset map to initial state
+    map.easeTo({
+        center: [16.29, 1.97],
+        zoom: 4,
+        duration: 1000
+    });
+}
 function clearFilters() {
     // Clear checkboxes
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
@@ -332,28 +339,16 @@ function clearFilters() {
     countryDropdown.value = null;
     countryDropdown.dispatchEvent(new Event('change'));
 
-    // Check if no checkboxes are checked and no country is selected
-    const noFiltersApplied = checkboxes.length === 0 && countryDropdown.value === null;
+    // Reload original map data
+    mapLocations = { ...originalMapLocations };
 
-    // Clear map filters or reset to initial state
-    if (noFiltersApplied) {
-        // Reset map to initial state
-        map.easeTo({
-            center: [16.29, 1.97],
-            zoom: 4,
-            duration: 1000
-        });
-        mapLocations.features.forEach(function (location, i) {
-      map.setFilter("locations", ["any"]);
-    });
-    } else {
-        // Clear map filters
-        map.setFilter("locations", ["any"]);
-        mapLocations.features.forEach(function (location, i) {
-      map.setFilter("locations", ["any"]);
-    });
-    }
+    // Update the map source data
+    map.getSource('locations').setData(mapLocations.features);
+
+    // Reset map to initial state
+    resetMap();
 }
+
 
 
 
