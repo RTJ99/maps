@@ -327,12 +327,15 @@ function resetMap() {
     duration: 1000,
   });
 
-  // Simulate selecting all checkboxes
-  $(".featureCheckbox").prop("checked", true);
+  // Simulate selecting all checkboxes without visually checking them
+  $(".featureCheckbox").prop("value", function () {
+    return $(this).val();
+  });
 
   // Manually trigger applyFilters to simulate all filters selected
   applyFilters();
 }
+
 
 function clearFilters() {
     const checkboxes = document.querySelectorAll('.featureCheckbox:checked');
