@@ -7,12 +7,7 @@ $(function () {
 
   const checkboxContainer = $("#checkboxContainer");
 
-  // Add an "All" option
-  checkboxContainer.append(`
-<label>
-    <input type="checkbox" id="allCheckbox" class="featureCheckbox" value="all"> All
-</label>
-`);
+
 
   // Rest of the loop for other features
   uniqueFeatureTexts.forEach(function (text, index) {
