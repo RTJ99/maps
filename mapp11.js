@@ -182,10 +182,20 @@ function searchByName() {
 
         toggleSidebar("left");
         showCollectionItemAndPopup(ID);
+
+        // Update the map data source with the filtered features
+        map.getSource('locations').setData({
+            type: 'FeatureCollection',
+            features: filteredFeatures,
+        });
     } else {
         alert('No matching locations found.');
+
+        // Reset the map to the default locations if no match is found
+        map.getSource('locations').setData(mapLocations);
     }
 }
+
 
     function addMapPoints() {
 
