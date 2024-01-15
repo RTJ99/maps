@@ -1,3 +1,4 @@
+const checkboxContainer = $('#checkboxContainer');
 $(function () {
 // something
 $('#countryDropdown').select2({
@@ -5,7 +6,7 @@ placeholder: 'Choose Countries',
 allowClear: true,
 });
 
-const checkboxContainer = $('#checkboxContainer');
+
 
 uniqueFeatureTexts.forEach(function (text, index) {
 
