@@ -365,7 +365,7 @@ function filterMapFeatures(selectedFeatureText) {
     feature.properties.features.includes(selectedFeatureText)
   );
 
-  map.setFilter("locations", ["in", selectedFeatureText, ["get", "features"]]);
+  map.setFilter("locations", null);
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
