@@ -343,6 +343,7 @@ function clearFilters() {
             zoom: 4,
             duration: 1000
         });
+        map.setFilter("locations", ["any"]);
     } else {
         // Clear map filters
         map.setFilter("locations", ["any"]);
