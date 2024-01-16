@@ -292,6 +292,18 @@ function addMapPoints() {
       "text-size": 12,
     },
   });
+   map.addLayer({
+        id: "unclustered-point",
+        type: "circle",
+        source: "clusters",
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+            "circle-radius": 8,
+            "circle-color": "#AA000D",
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#ffffff",
+        },
+    });
 
 
 
