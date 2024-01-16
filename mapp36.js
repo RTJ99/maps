@@ -226,7 +226,7 @@ function searchByName() {
 }
 
 function addMapPoints() {
-map.addLayer({
+map.addSource({
     id: "locations",
     type: "circle",
     source: {
@@ -236,13 +236,7 @@ map.addLayer({
       clusterMaxZoom: 14,
       clusterRadius: 50,
     },
-    paint: {
-      "circle-radius": 18,
-      "circle-stroke-width": 1,
-      "circle-color": "#AA000D",
-      "circle-opacity": 1,
-      "circle-stroke-color": "#ffffff",
-    },
+  
   });
 
   map.addLayer({
@@ -273,6 +267,19 @@ map.addLayer({
       "text-field": ["get", "point_count_abbreviated"],
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
       "text-size": 12,
+    },
+  });
+
+   map.addLayer({
+    id: "unclustered-point",
+    type: "circle",
+    source: "locations",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": "#11b4da",
+      "circle-radius": 7,
+      "circle-stroke-width": 1,
+      "circle-stroke-color": "#fff",
     },
   });
 
