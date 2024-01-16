@@ -306,22 +306,33 @@ function addMapPoints() {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
-  map.on("click", "clusters", (e) => {
+map.on("click", "clusters", (e) => {
   const features = map.queryRenderedFeatures(e.point, {
     layers: ["clusters"],
   });
 
   const clusterId = features[0].properties.cluster_id;
-  const expansionZoom = supercluster.getClusterExpansionZoom(clusterId);
-  map.easeTo({
-    center: features[0].geometry.coordinates,
-    zoom: expansionZoom,
-  });
 
-  // Fetch the children of the clicked cluster
-  const children = supercluster.getChildren(clusterId);
-  console.log("Cluster Children:", children);
+  // Check if it's a cluster
+  if (clusterId) {
+    const expansionZoom = supercluster.getClusterExpansionZoom(clusterId);
+    map.easeTo({
+      center: features[0].geometry.coordinates,
+      zoom: expansionZoom,
+    });
+  } else {
+    // Handle click on an individual point
+    const coordinates = features[0].geometry.coordinates.slice();
+    const description = features[0].properties.description;
+
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+  }
 });
+
 
 
   map.on("click", "locations", (e) => {
