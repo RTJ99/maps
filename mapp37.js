@@ -226,18 +226,14 @@ function searchByName() {
 }
 
 function addMapPoints() {
-map.addSource({
-    id: "locations",
-    type: "circle",
-    source: {
-      type: "geojson",
-      data: mapLocations,
-      cluster: true,
-      clusterMaxZoom: 14,
-      clusterRadius: 50,
-    },
-  
+map.addSource("locations", {
+    type: "geojson",
+    data: mapLocations,
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 50,
   });
+
 
   map.addLayer({
     id: "clusters",
