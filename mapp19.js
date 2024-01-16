@@ -31,56 +31,61 @@ $(function () {
     );
   });
 
-  checkboxContainer.on('change', '.featureCheckbox', function () {
-    if ($(this).val() === 'all') {
-        // Uncheck other checkboxes when "All" is checked
-        $('.featureCheckbox').not(this).prop('checked', false);
+  checkboxContainer.on("change", ".featureCheckbox", function () {
+    if ($(this).val() === "all") {
+      // Uncheck other checkboxes when "All" is checked
+      $(".featureCheckbox").not(this).prop("checked", false);
     } else {
-        // Uncheck the "All" checkbox when other checkboxes are checked
-        $('#allCheckbox').prop('checked', false);
+      // Uncheck the "All" checkbox when other checkboxes are checked
+      $("#allCheckbox").prop("checked", false);
     }
     applyFilters();
-});
+  });
 });
 
 function applyFilters() {
-    const selectedFeatures = $('.featureCheckbox:checked').map(function () {
-        return $(this).val();
-    }).get();
+  const selectedFeatures = $(".featureCheckbox:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
 
-    const selectedCountries = $('#countryDropdown').val();
+  const selectedCountries = $("#countryDropdown").val();
 
-    let filterCondition = ["any"];
+  let filterCondition = ["any"];
 
-    if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-        const featuresFilter = ["any"];
-        selectedFeatures.forEach(function (selectedFeature) {
-            featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
-        });
-        filterCondition.push(featuresFilter);
-    }
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    const featuresFilter = ["any"];
+    selectedFeatures.forEach(function (selectedFeature) {
+      featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+    });
+    filterCondition.push(featuresFilter);
+  }
 
-    if (selectedCountries && selectedCountries.length > 0) {
-        const countriesFilter = ["any"];
-        selectedCountries.forEach(function (selectedCountry) {
-            countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
-        });
-        filterCondition.push(countriesFilter);
-    }
+  if (selectedCountries && selectedCountries.length > 0) {
+    const countriesFilter = ["any"];
+    selectedCountries.forEach(function (selectedCountry) {
+      countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
+    });
+    filterCondition.push(countriesFilter);
+  }
 
-    // If "All" is selected, log and show points with vowels in the description
-    if (selectedFeatures.includes("all")) {
-        const vowelPoints = mapLocations.features.filter(feature => /[aeiou]/i.test(feature.properties.description));
-        console.log("Points with Vowels:", vowelPoints);
-        map.setFilter("locations", ["in", "id", ...vowelPoints.map(point => point.properties.id)]);
-    } else {
-        // Show locations based on selected filters
-        map.setFilter("locations", filterCondition);
-    }
+  // If "All" is selected, log and show points with vowels in the description
+  if (selectedFeatures.includes("all")) {
+    const vowelPoints = mapLocations.features.filter((feature) =>
+      /[aeiou]/i.test(feature.properties.description)
+    );
+    console.log("Points with Vowels:", vowelPoints);
+    map.setFilter("locations", [
+      "in",
+      "id",
+      ...vowelPoints.map((point) => point.properties.id),
+    ]);
+  } else {
+    // Show locations based on selected filters
+    map.setFilter("locations", filterCondition);
+  }
 }
-
-
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -221,10 +226,60 @@ function searchByName() {
 }
 
 function addMapPoints() {
+  const supercluster = new Supercluster({
+    radius: 40,
+    maxZoom: 16,
+  });
+
+  supercluster.load(mapLocations.features);
+
+  map.addSource("clusters", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: supercluster.getClusters(
+        [-180, -90, 180, 90],
+        Math.floor(map.getZoom())
+      ),
+    },
+  });
+
+  map.addLayer({
+    id: "clusters",
+    type: "circle",
+    source: "clusters",
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-radius": [
+        "step",
+        ["get", "point_count"],
+        20,
+        50,
+        30,
+        100,
+        40,
+        300,
+        50,
+      ],
+      "circle-color": "#AA000D",
+    },
+  });
+
+  map.addLayer({
+    id: "cluster-count",
+    type: "symbol",
+    source: "clusters",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 12,
+    },
+  });
+
   map.addLayer({
     id: "locations",
     type: "circle",
-
     source: {
       type: "geojson",
       data: mapLocations,
@@ -249,6 +304,20 @@ function addMapPoints() {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
+  map.on("click", "clusters", (e) => {
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: ["clusters"],
+    });
+
+    const clusterId = features[0].properties.cluster_id;
+    const cluster = supercluster.getCluster(clusterId);
+
+    map.easeTo({
+      center: cluster.geometry.coordinates,
+      zoom: map.getZoom() + 2,
+    });
+  });
+
   map.on("click", "locations", (e) => {
     const ID = e.features[0].properties.arrayID;
 
@@ -264,17 +333,6 @@ function addMapPoints() {
     $(".locations-map_item").eq(ID).addClass("is--show");
   });
 
-  map.on("click", "locations", (e) => {
-    map.flyTo({
-      center: e.features[0].geometry.coordinates,
-      speed: 0.5,
-      curve: 1,
-      easing(t) {
-        return t;
-      },
-    });
-  });
-
   map.on("mouseenter", "locations", () => {
     map.getCanvas().style.cursor = "pointer";
   });
@@ -283,6 +341,7 @@ function addMapPoints() {
     map.getCanvas().style.cursor = "";
   });
 }
+
 
 map.on("load", function (e) {
   const defaultFeature = {
