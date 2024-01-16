@@ -293,39 +293,39 @@ map.addSource("locations", {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
-  map.on("click", "locations", (e) => {
-    const ID = e.features[0].properties.arrayID;
+  map.on("click", "unclustered-point", (e) => {
+  const ID = e.features[0].properties.arrayID;
 
-    addPopup(e);
-    closeSidebar();
+  addPopup(e);
+  closeSidebar();
 
-    $(".locations-map_wrapper").addClass("is--show");
+  $(".locations-map_wrapper").addClass("is--show");
 
-    if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
-    }
+  if ($(".locations-map_item.is--show").length) {
+    $(".locations-map_item").removeClass("is--show");
+  }
 
-    $(".locations-map_item").eq(ID).addClass("is--show");
-  });
+  $(".locations-map_item").eq(ID).addClass("is--show");
+});
 
-  map.on("click", "locations", (e) => {
-    map.flyTo({
-      center: e.features[0].geometry.coordinates,
-      speed: 0.5,
-      curve: 1,
-      easing(t) {
-        return t;
-      },
-    });
-  });
+map.on("mouseenter", "unclustered-point", (e) => {
+  map.getCanvas().style.cursor = "pointer";
 
-  map.on("mouseenter", "clusters", () => {
-    map.getCanvas().style.cursor = "pointer";
-  });
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const description = e.features[0].properties.description;
 
-  map.on("mouseleave", "clusters", () => {
-    map.getCanvas().style.cursor = "";
-  });
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+
+  popup.setLngLat(coordinates).setHTML(description).addTo(map);
+});
+
+map.on("mouseleave", "unclustered-point", () => {
+  map.getCanvas().style.cursor = "";
+  popup.remove();
+});
+
 
     //  zoom to cluster on click
     map.on('click', 'clusters', function (e) {
