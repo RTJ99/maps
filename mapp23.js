@@ -233,6 +233,22 @@ function addMapPoints() {
 
   supercluster.load(mapLocations.features);
 
+    map.addLayer({
+    id: "locations",
+    type: "circle",
+    source: {
+      type: "geojson",
+      data: mapLocations,
+    },
+    paint: {
+      "circle-radius": 8,
+      "circle-stroke-width": 1,
+      "circle-color": "#AA000D",
+      "circle-opacity": 1,
+      "circle-stroke-color": "#ffffff",
+    },
+  });
+
   map.addSource("clusters", {
     type: "geojson",
     data: {
@@ -277,21 +293,7 @@ function addMapPoints() {
     },
   });
 
-  map.addLayer({
-    id: "locations",
-    type: "circle",
-    source: {
-      type: "geojson",
-      data: mapLocations,
-    },
-    paint: {
-      "circle-radius": 8,
-      "circle-stroke-width": 1,
-      "circle-color": "#AA000D",
-      "circle-opacity": 1,
-      "circle-stroke-color": "#ffffff",
-    },
-  });
+
 
   function addPopup(e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
