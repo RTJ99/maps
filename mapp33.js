@@ -226,7 +226,24 @@ function searchByName() {
 }
 
 function addMapPoints() {
-
+map.addLayer({
+    id: "locations",
+    type: "circle",
+    source: {
+      type: "geojson",
+      data: mapLocations,
+      cluster: true,
+      clusterMaxZoom: 14,
+      clusterRadius: 50,
+    },
+    paint: {
+      "circle-radius": 8,
+      "circle-stroke-width": 1,
+      "circle-color": "#AA000D",
+      "circle-opacity": 1,
+      "circle-stroke-color": "#ffffff",
+    },
+  });
 
   map.addLayer({
     id: "clusters",
@@ -266,29 +283,12 @@ function addMapPoints() {
     filter: ["!", ["has", "point_count"]],
     paint: {
       "circle-color": "#11b4da",
-      "circle-radius": 4,
+      "circle-radius": 7,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
     },
   });
-    map.addLayer({
-    id: "locations",
-    type: "circle",
-    source: {
-      type: "geojson",
-      data: mapLocations,
-      cluster: true,
-      clusterMaxZoom: 14,
-      clusterRadius: 50,
-    },
-    paint: {
-      "circle-radius": 8,
-      "circle-stroke-width": 1,
-      "circle-color": "#AA000D",
-      "circle-opacity": 1,
-      "circle-stroke-color": "#ffffff",
-    },
-  });
+    
 
   function addPopup(e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
