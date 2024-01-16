@@ -276,18 +276,7 @@ map.addLayer({
     },
   });
 
-  map.addLayer({
-    id: "unclustered-point",
-    type: "circle",
-    source: "locations",
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#11b4da",
-      "circle-radius": 7,
-      "circle-stroke-width": 1,
-      "circle-stroke-color": "#fff",
-    },
-  });
+ 
     
 
   function addPopup(e) {
