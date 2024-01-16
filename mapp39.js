@@ -293,20 +293,23 @@ map.addSource("locations", {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
-  map.on("click", "unclustered-point", (e) => {
-  const ID = e.features[0].properties.arrayID;
+map.on("click", "unclustered-point", (e) => {
+  if (e.features && e.features.length > 0) {
+    const ID = e.features[0].properties.arrayID;
 
-  addPopup(e);
-  closeSidebar();
+    addPopup(e);
+    closeSidebar();
 
-  $(".locations-map_wrapper").addClass("is--show");
+    $(".locations-map_wrapper").addClass("is--show");
 
-  if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
+    if ($(".locations-map_item.is--show").length) {
+      $(".locations-map_item").removeClass("is--show");
+    }
+
+    $(".locations-map_item").eq(ID).addClass("is--show");
   }
-
-  $(".locations-map_item").eq(ID).addClass("is--show");
 });
+
 
 map.on("mouseenter", "unclustered-point", (e) => {
   map.getCanvas().style.cursor = "pointer";
