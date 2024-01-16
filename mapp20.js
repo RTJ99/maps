@@ -226,7 +226,7 @@ function searchByName() {
 }
 
 function addMapPoints() {
-  const supercluster = new Supercluster({
+  const supercluster = new supercluster({
     radius: 40,
     maxZoom: 16,
   });
