@@ -305,18 +305,22 @@ function addMapPoints() {
   }
 
   map.on("click", "clusters", (e) => {
-    const features = map.queryRenderedFeatures(e.point, {
-      layers: ["clusters"],
-    });
-
-    const clusterId = features[0].properties.cluster_id;
-    const cluster = supercluster.getCluster(clusterId);
-
-    map.easeTo({
-      center: cluster.geometry.coordinates,
-      zoom: map.getZoom() + 2,
-    });
+  const features = map.queryRenderedFeatures(e.point, {
+    layers: ["clusters"],
   });
+
+  const clusterId = features[0].properties.cluster_id;
+  const expansionZoom = supercluster.getClusterExpansionZoom(clusterId);
+  map.easeTo({
+    center: features[0].geometry.coordinates,
+    zoom: expansionZoom,
+  });
+
+  // Fetch the children of the clicked cluster
+  const children = supercluster.getChildren(clusterId);
+  console.log("Cluster Children:", children);
+});
+
 
   map.on("click", "locations", (e) => {
     const ID = e.features[0].properties.arrayID;
