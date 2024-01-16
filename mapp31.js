@@ -226,75 +226,67 @@ function searchByName() {
 }
 
 function addMapPoints() {
-    map.addLayer({
-    id: 'locations',
-    type: 'circle',
+  map.addLayer({
+    id: "locations",
+    type: "circle",
     source: {
-      type: 'geojson',
+      type: "geojson",
       data: mapLocations,
       cluster: true,
       clusterMaxZoom: 14,
-      clusterRadius: 50
+      clusterRadius: 50,
     },
     paint: {
-      'circle-radius': 8,
-      'circle-stroke-width': 1,
-      'circle-color': '#AA000D',
-      'circle-opacity': 1,
-      'circle-stroke-color': '#ffffff'
-    }
+      "circle-radius": 8,
+      "circle-stroke-width": 1,
+      "circle-color": "#AA000D",
+      "circle-opacity": 1,
+      "circle-stroke-color": "#ffffff",
+    },
   });
 
   map.addLayer({
-    id: 'clusters',
-    type: 'circle',
-    source: 'locations',
-    filter: ['has', 'point_count'],
+    id: "clusters",
+    type: "circle",
+    source: "locations",
+    filter: ["has", "point_count"],
     paint: {
-      'circle-color': [
-        'step',
-        ['get', 'point_count'],
-        '#51bbd6',
+      "circle-color": [
+        "step",
+        ["get", "point_count"],
+        "#51bbd6",
         100,
-        '#f1f075',
+        "#f1f075",
         750,
-        '#f28cb1'
+        "#f28cb1",
       ],
-      'circle-radius': [
-        'step',
-        ['get', 'point_count'],
-        20,
-        100,
-        30,
-        750,
-        40
-      ]
-    }
+      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+    },
   });
 
   map.addLayer({
-    id: 'cluster-count',
-    type: 'symbol',
-    source: 'locations',
-    filter: ['has', 'point_count'],
+    id: "cluster-count",
+    type: "symbol",
+    source: "locations",
+    filter: ["has", "point_count"],
     layout: {
-      'text-field': ['get', 'point_count_abbreviated'],
-      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-      'text-size': 12
-    }
+      "text-field": ["get", "point_count_abbreviated"],
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 12,
+    },
   });
 
   map.addLayer({
-    id: 'unclustered-point',
-    type: 'circle',
-    source: 'locations',
-    filter: ['!', ['has', 'point_count']],
+    id: "unclustered-point",
+    type: "circle",
+    source: "locations",
+    filter: ["!", ["has", "point_count"]],
     paint: {
-      'circle-color': '#11b4da',
-      'circle-radius': 4,
-      'circle-stroke-width': 1,
-      'circle-stroke-color': '#fff'
-    }
+      "circle-color": "#11b4da",
+      "circle-radius": 4,
+      "circle-stroke-width": 1,
+      "circle-stroke-color": "#fff",
+    },
   });
 
   function addPopup(e) {
@@ -334,37 +326,33 @@ function addMapPoints() {
     });
   });
 
- map.on('mouseenter', 'clusters', () => {
-  map.getCanvas().style.cursor = 'pointer';
-});
-
-map.on('mouseleave', 'clusters', () => {
-  map.getCanvas().style.cursor = '';
-});
-
-map.on('click', 'clusters', (e) => {
-  const features = map.queryRenderedFeatures(e.point, {
-    layers: ['clusters']
+  map.on("mouseenter", "clusters", () => {
+    map.getCanvas().style.cursor = "pointer";
   });
 
-  if (!features || !features.length) {
-    return;
-  }
+  map.on("mouseleave", "clusters", () => {
+    map.getCanvas().style.cursor = "";
+  });
 
-  const clusterId = features[0].properties.cluster_id;
-  map.getSource('locations').getClusterExpansionZoom(
-    clusterId,
-    (err, zoom) => {
-      if (err) return;
-
-      map.easeTo({
-        center: features[0].geometry.coordinates,
-        zoom: zoom
+    //  zoom to cluster on click
+    map.on('click', 'clusters', function (e) {
+      var features = map.queryRenderedFeatures(e.point, {
+          layers: ['clusters']
       });
-    }
-  );
-});
-
+      var clusterId = features[0].properties.cluster_id;
+      map.getSource('locations').getClusterExpansionZoom(
+          clusterId,
+          function (err, zoom) {
+              if (err)
+                  return;
+              map.easeTo({
+                  center: features[0].geometry.coordinates,
+                  zoom: zoom
+              });
+          }
+      );
+        
+    });
 }
 
 map.on("load", function (e) {
