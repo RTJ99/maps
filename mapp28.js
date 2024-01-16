@@ -226,16 +226,10 @@ function searchByName() {
 }
 
 function addMapPoints() {
-  const supercluster = new Supercluster({
-    radius: 40,
-    maxZoom: 16,
-  });
-
-  supercluster.load(mapLocations.features);
-
-    map.addLayer({
+  map.addLayer({
     id: "locations",
     type: "circle",
+
     source: {
       type: "geojson",
       data: mapLocations,
@@ -249,64 +243,6 @@ function addMapPoints() {
     },
   });
 
-  map.addSource("clusters", {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: supercluster.getClusters(
-        [-180, -90, 180, 90],
-        Math.floor(map.getZoom())
-      ),
-    },
-  });
-
-  map.addLayer({
-    id: "clusters",
-    type: "circle",
-    source: "clusters",
-    filter: ["has", "point_count"],
-    paint: {
-      "circle-radius": [
-        "step",
-        ["get", "point_count"],
-        20,
-        50,
-        30,
-        100,
-        40,
-        300,
-        50,
-      ],
-      "circle-color": "#AA000D",
-    },
-  });
-
-  map.addLayer({
-    id: "cluster-count",
-    type: "symbol",
-    source: "clusters",
-    filter: ["has", "point_count"],
-    layout: {
-      "text-field": "{point_count_abbreviated}",
-      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-      "text-size": 12,
-    },
-  });
-   map.addLayer({
-        id: "unclustered-point",
-        type: "circle",
-        source: "clusters",
-        filter: ["!", ["has", "point_count"]],
-        paint: {
-            "circle-radius": 8,
-            "circle-color": "#AA000D",
-            "circle-stroke-width": 1,
-            "circle-stroke-color": "#ffffff",
-        },
-    });
-
-
-
   function addPopup(e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const description = e.features[0].properties.description;
@@ -317,35 +253,6 @@ function addMapPoints() {
 
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
-
-map.on("click", "clusters", (e) => {
-  const features = map.queryRenderedFeatures(e.point, {
-    layers: ["clusters"],
-  });
-
-  const clusterId = features[0].properties.cluster_id;
-
-  // Check if it's a cluster
-  if (clusterId) {
-    const expansionZoom = supercluster.getClusterExpansionZoom(clusterId);
-    map.easeTo({
-      center: features[0].geometry.coordinates,
-      zoom: expansionZoom,
-    });
-  } else {
-    // Handle click on an individual point
-    const coordinates = features[0].geometry.coordinates.slice();
-    const description = features[0].properties.description;
-
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
-
-    new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
-  }
-});
-
-
 
   map.on("click", "locations", (e) => {
     const ID = e.features[0].properties.arrayID;
@@ -362,6 +269,17 @@ map.on("click", "clusters", (e) => {
     $(".locations-map_item").eq(ID).addClass("is--show");
   });
 
+  map.on("click", "locations", (e) => {
+    map.flyTo({
+      center: e.features[0].geometry.coordinates,
+      speed: 0.5,
+      curve: 1,
+      easing(t) {
+        return t;
+      },
+    });
+  });
+
   map.on("mouseenter", "locations", () => {
     map.getCanvas().style.cursor = "pointer";
   });
@@ -370,7 +288,6 @@ map.on("click", "clusters", (e) => {
     map.getCanvas().style.cursor = "";
   });
 }
-
 
 map.on("load", function (e) {
   const defaultFeature = {
