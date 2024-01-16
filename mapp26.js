@@ -277,7 +277,7 @@ function addMapPoints() {
         300,
         50,
       ],
-      "circle-color": "#000",
+      "circle-color": "#AA000D",
     },
   });
 
