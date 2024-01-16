@@ -237,7 +237,7 @@ map.addLayer({
       clusterRadius: 50,
     },
     paint: {
-      "circle-radius": 8,
+      "circle-radius": 18,
       "circle-stroke-width": 1,
       "circle-color": "#AA000D",
       "circle-opacity": 1,
