@@ -334,13 +334,37 @@ function addMapPoints() {
     });
   });
 
-  map.on("mouseenter", "locations", () => {
-    map.getCanvas().style.cursor = "pointer";
+ map.on('mouseenter', 'clusters', () => {
+  map.getCanvas().style.cursor = 'pointer';
+});
+
+map.on('mouseleave', 'clusters', () => {
+  map.getCanvas().style.cursor = '';
+});
+
+map.on('click', 'clusters', (e) => {
+  const features = map.queryRenderedFeatures(e.point, {
+    layers: ['clusters']
   });
 
-  map.on("mouseleave", "locations", () => {
-    map.getCanvas().style.cursor = "";
-  });
+  if (!features || !features.length) {
+    return;
+  }
+
+  const clusterId = features[0].properties.cluster_id;
+  map.getSource('locations').getClusterExpansionZoom(
+    clusterId,
+    (err, zoom) => {
+      if (err) return;
+
+      map.easeTo({
+        center: features[0].geometry.coordinates,
+        zoom: zoom
+      });
+    }
+  );
+});
+
 }
 
 map.on("load", function (e) {
