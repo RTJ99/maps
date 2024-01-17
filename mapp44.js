@@ -289,27 +289,33 @@ function addMapPoints() {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
-  map.on("click", "locations", (e) => {
-    try{
-    if (e.features && e.features.length > 0) {
-      const ID = e.features[0].properties.arrayID;
-      console.log(e.features[0].geometry, "features");
-      console.log(ID, "uuuuuuuu");
-      addPopup(e);
-      closeSidebar();
+ map.on("click", "locations", (e) => {
+  try {
+    const feature = e.features[0];
+    if (feature) {
+      if (feature.properties.cluster) {
+        // Handle cluster click
+      } else {
+        const ID = feature.properties.arrayID;
+        console.log(feature.geometry, "features");
+        console.log(ID, "uuuuuuuu");
+        addPopup(e);
+        closeSidebar();
 
-      $(".locations-map_wrapper").addClass("is--show");
+        $(".locations-map_wrapper").addClass("is--show");
 
-      if ($(".locations-map_item.is--show").length) {
-        $(".locations-map_item").removeClass("is--show");
+        if ($(".locations-map_item.is--show").length) {
+          $(".locations-map_item").removeClass("is--show");
+        }
+
+        $(".locations-map_item").eq(ID).addClass("is--show");
       }
-
-      $(".locations-map_item").eq(ID).addClass("is--show");
     }
-    }catch (error) {
+  } catch (error) {
     console.error("Error in click event handler:", error);
   }
-  });
+});
+
 
   map.on("mouseenter", "locations", (e) => {
     map.getCanvas().style.cursor = "pointer";
