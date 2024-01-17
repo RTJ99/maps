@@ -100,7 +100,7 @@ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
     map.setFilter("clusters", ["==", "point_count", 0], featuresFilter);
-    console.log(filterCondition,"###### filterCondition ####");
+    console.log(featuresFilter,"###### filterCondition ####");
 
     map.setFilter("locations", filterCondition);
 
