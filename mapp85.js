@@ -69,61 +69,28 @@ function applyFilters() {
     filterCondition.push(countriesFilter);
   }
 
-  // If "All" is selected, log and show points with vowels in the description
+  // If "All" is selected, show all clusters
   if (selectedFeatures.includes("all")) {
-    const vowelPoints = mapLocations.features.filter((feature) =>
-      /[aeiou]/i.test(feature.properties.description)
-    );
-    console.log("Points with Vowels:", vowelPoints);
+    // Show all clusters and cluster count layer
+    map.setFilter("clusters", ["has", "point_count"]);
 
-    // Show only unclustered points with vowels
-    map.setFilter("locations", [
-      "in",
-      "id",
-      ...vowelPoints.map((point) => point.properties.id),
-    ]);
-
-    // Remove clusters and cluster count layer
-    map.removeLayer("clusters");
-    map.removeLayer("cluster-count");
+    // Remove the filter on locations
+    map.setFilter("locations", ["any"]);
 
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
     // Show clusters and cluster count layer based on selected filters
-    map.addLayer({
-      id: "clusters",
-      type: "circle",
-      source: "locations",
-      filter: ["has", "point_count"],
-      paint: {
-        "circle-color": [
-          "step",
-          ["get", "point_count"],
-          "#51bbd6",
-          100,
-          "#f1f075",
-          750,
-          "#f28cb1",
-        ],
-        "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
-      },
-    });
-
-    map.addLayer({
-      id: "cluster-count",
-      type: "symbol",
-      source: "locations",
-      filter: ["has", "point_count"],
-      layout: {
-        "text-field": ["get", "point_count_abbreviated"],
-        "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-        "text-size": 12,
-      },
-    });
+    map.setFilter("clusters", [
+      "any",
+      ["!has", "point_count"],
+      [">", ["get", "point_count"], 0],
+      ...filterCondition,
+    ]);
   }
 }
+
 
 
 
