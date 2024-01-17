@@ -95,7 +95,7 @@ function applyFilters() {
   "in",
   "cluster_id",
   ...filterCondition,
-  ["!=", ["point_count"], 0], // Only show clusters with unclustered points
+  ["!=", ["get", "point_count"], 0], // Only show clusters with unclustered points
 ]);
   }
 }
