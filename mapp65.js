@@ -86,48 +86,19 @@ function applyFilters() {
     // Set the filter for clusters based on the presence of points in the cluster
     const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
     map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
-
-    // Update the point count for clusters
-    updateClusterPointCount();
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
     // Set the filter for clusters based on the presence of points in the cluster
     map.setFilter("clusters", [
-      ">",
-      "point_count",
-      0, // Only show clusters that have at least one point
-      ...filterCondition,
-    ]);
-
-    // Update the point count for clusters
-    updateClusterPointCount();
+  "in",
+  "cluster_id",
+  ...filterCondition,
+  ["!=", ["point_count"], 0], // Only show clusters with unclustered points
+]);
   }
 }
-function updateClusterPointCount() {
-  // Get the current filter for clusters
-  const clusterFilter = map.getFilter("clusters");
-
-  // Get all features from the "clusters" layer
-  const allClusters = map.querySourceFeatures("locations", { sourceLayer: "clusters" });
-
-  // Filter visible clusters based on the cluster filter
-  const visibleClusters = allClusters.filter((cluster) => {
-    const satisfiesFilter = map.queryRenderedFeatures({ layers: ["clusters"], filter: ["==", "cluster_id", cluster.properties.cluster_id] }).length > 0;
-    return satisfiesFilter;
-  });
-
-  // Update the point count for clusters
-  visibleClusters.forEach((cluster) => {
-    const clusterId = cluster.properties.cluster_id;
-    const clusterPointCount = cluster.properties.point_count;
-
-    // Perform your update logic, e.g., update UI with point count
-    console.log(`Cluster ${clusterId} has ${clusterPointCount} points`);
-  });
-}
-
 
 
 
