@@ -46,7 +46,7 @@ function applyFilters() {
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       console.log(this.value,"selected feature/*******************");
-      return $(this).val();
+      return $(this).value;
     })
     .get();
 
