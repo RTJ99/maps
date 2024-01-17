@@ -90,10 +90,10 @@ function applyFilters() {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
-   map.setFilter("clusters", [
+  map.setFilter("clusters", [
   "all",
   ...filterCondition,
-  [">", ["case", ["has", "point_count"], ["get", "point_count"], 0]],
+  ["!=", ["get", "point_count"], 0],
 ]);
   }
 }
