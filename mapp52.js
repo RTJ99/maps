@@ -299,7 +299,7 @@ map.addLayer({
       console.log(feature.geometry, "features");
       console.log(ID, "uuuuuuuu");
       // addPopup(e);
-      closeSidebar();
+      // closeSidebar();
   addPopup(e);
 });
 
