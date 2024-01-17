@@ -96,11 +96,10 @@ function applyFilters() {
     map.setFilter("locations", filterCondition);
 
     // Set the filter for clusters based on the point_count property
-    map.setFilter("clusters", [
-      ">", "point_count", 0
-    ]);
+    map.setFilter("clusters", ["all", filterCondition, [">", "point_count", 0]]);
   }
 }
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
