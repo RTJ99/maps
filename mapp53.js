@@ -298,8 +298,14 @@ map.addLayer({
     const ID = feature.properties.arrayID;
       console.log(feature.geometry, "features");
       console.log(ID, "uuuuuuuu");
-      // addPopup(e);
-      // closeSidebar();
+      addPopup(e);
+    $(".locations-map_wrapper").addClass("is--show");
+
+      if ($(".locations-map_item.is--show").length) {
+        $(".locations-map_item").removeClass("is--show");
+      }
+
+      $(".locations-map_item").eq(ID).addClass("is--show");
   addPopup(e);
 });
 
