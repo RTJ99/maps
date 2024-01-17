@@ -234,18 +234,7 @@ function addMapPoints() {
     clusterRadius: 50,
   });
 
-    map.addLayer({
-    id: "locations",
-    type: "circle",
-    source: "locations",
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#11b4da",
-      "circle-radius": 7,
-      "circle-stroke-width": 1,
-      "circle-stroke-color": "#fff",
-    },
-  });
+    
 
   map.addLayer({
     id: "clusters",
@@ -277,7 +266,18 @@ function addMapPoints() {
       "text-size": 12,
     },
   });
-
+map.addLayer({
+    id: "locations",
+    type: "circle",
+    source: "locations",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": "#11b4da",
+      "circle-radius": 7,
+      "circle-stroke-width": 1,
+      "circle-stroke-color": "#fff",
+    },
+  });
 
 
   function addPopup(e) {
@@ -292,30 +292,7 @@ function addMapPoints() {
   }
 
  map.on("click", "locations", (e) => {
-  try {
-    const feature = e.features[0];
-    if (feature) {
-      if (feature.properties.cluster) {
-        // Handle cluster click
-      } else {
-        const ID = feature.properties.arrayID;
-        console.log(feature.geometry, "features");
-        console.log(ID, "uuuuuuuu");
-        addPopup(e);
-        closeSidebar();
-
-        $(".locations-map_wrapper").addClass("is--show");
-
-        if ($(".locations-map_item.is--show").length) {
-          $(".locations-map_item").removeClass("is--show");
-        }
-
-        $(".locations-map_item").eq(ID).addClass("is--show");
-      }
-    }
-  } catch (error) {
-    console.error("Error in click event handler:", error);
-  }
+  console.log("smthn")
 });
 
 
