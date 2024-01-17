@@ -45,8 +45,8 @@ $(function () {
 function applyFilters() {
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
-      console.log($(this).val(),"selected feature/*******************");
-      return $(this).val();
+      console.log($(this).value,"selected feature/*******************");
+      return $(this).value;
     })
     .get();
   console.log(selectedFeatures,"selected features ******************");
@@ -83,7 +83,7 @@ function applyFilters() {
 
   } else {
     // Show clusters and unclustered points that match the selected features
-    map.setFilter("clusters", ["all", ["==", "point_count", 0], "Tourism"]);
+    map.setFilter("clusters", ["all", ["==", "point_count", 0], filterCondition);
     console.log(filterCondition,"lklkl")
 
     map.setFilter("locations", filterCondition);
