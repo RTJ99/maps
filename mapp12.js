@@ -52,7 +52,7 @@ function applyFilters() {
     */
   let selectedFeatures = [
     "Renewable Energy",
-    "Healthcare"
+    "Refugees"
 ];  
   console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
