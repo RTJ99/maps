@@ -86,14 +86,15 @@ function applyFilters() {
     // Set the filter for clusters based on the presence of points in the cluster
     const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
     map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
+    console.log("here")
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 console.log("munomu")
-  map.setFilter("clusters", [
-  "all",
+map.setFilter("clusters", [
+  "any",
   ...filterCondition,
-  ["!=", ["get", "point_count"], 0],
+  [">", ["case", ["has", "point_count"], ["get", "point_count"], 0]],
 ]);
   }
 }
