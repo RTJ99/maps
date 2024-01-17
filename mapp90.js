@@ -78,9 +78,9 @@ function applyFilters() {
     map.setFilter("locations", ["!has", "point_count"]);
 
   } else {
-    // Remove both clusters and unclustered points
-    map.setFilter("locations", ["!has", "point_count"]);
-
+    // Show only unclustered points that match the selected filters
+    map.setFilter("locations", filterCondition);
+    
     // Remove clusters
     map.setFilter("clusters", ["==", "point_count", 0]);
   }
