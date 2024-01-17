@@ -296,7 +296,8 @@ map.addSource("locations", {
 map.on("click", "unclustered-point", (e) => {
   if (e.features && e.features.length > 0) {
     const ID = e.features[0].properties.arrayID;
-
+    console.log(e.features,"features")
+console.log(ID,"uuuuuuuu")
     addPopup(e);
     closeSidebar();
 
