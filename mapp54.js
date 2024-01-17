@@ -76,14 +76,18 @@ function applyFilters() {
       /[aeiou]/i.test(feature.properties.description)
     );
     console.log("Points with Vowels:", vowelPoints);
+
+    // Filter both individual points and clusters based on selected features
     map.setFilter("locations", [
       "in",
       "id",
       ...vowelPoints.map((point) => point.properties.id),
     ]);
+    map.setFilter("clusters", ["in", "id", ...vowelPoints.map((point) => point.properties.id)]);
   } else {
-    // Show locations based on selected filters
+    // Show locations and clusters based on selected filters
     map.setFilter("locations", filterCondition);
+    map.setFilter("clusters", filterCondition);
   }
 }
 
