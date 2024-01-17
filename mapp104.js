@@ -59,7 +59,9 @@ function applyFilters() {
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
     });
+    console.log(selectedFeatures,"selected features++++++++");
     filterCondition.push(featuresFilter);
+    console.log(filterCondition,"filter condition-------");
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
@@ -67,6 +69,7 @@ function applyFilters() {
     selectedCountries.forEach(function (selectedCountry) {
       countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
     });
+   
     filterCondition.push(countriesFilter);
   }
 
