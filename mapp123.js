@@ -74,15 +74,9 @@ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
         featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);
     });
 
-    // The final filterCondition
-    let filterCondition = featuresFilter;
-
-    console.log(filterCondition, "filter condition-------");
 }
 
 
-  
-  
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
     selectedCountries.forEach(function (selectedCountry) {
@@ -104,7 +98,7 @@ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
   } else {
     console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
-    map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
+    map.setFilter("clusters", ["==", "point_count", 0], featuresFilter;
     console.log(filterCondition,"###### filterCondition ####");
 
     map.setFilter("locations", filterCondition);
