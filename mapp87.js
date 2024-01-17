@@ -78,16 +78,15 @@ function applyFilters() {
     map.setFilter("locations", ["!has", "point_count"]);
 
   } else {
-    // Show locations based on selected filters
-    map.setFilter("locations", filterCondition);
-
-    // Show clusters based on selected filters
-    map.setFilter("clusters", [
-      "any",
+    // Show only unclustered points based on selected filters
+    map.setFilter("locations", [
+      "all",
       ["!has", "point_count"],
-      [">", ["get", "point_count"], 0],
       ...filterCondition,
     ]);
+
+    // Remove clusters
+    map.setFilter("clusters", ["==", "point_count", 0]);
   }
 }
 
