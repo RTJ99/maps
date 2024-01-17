@@ -97,6 +97,7 @@ function applyFilters() {
 
 
 
+
 $(".locations-map_wrapper").removeClass("is--show");
 
 mapboxgl.accessToken =
