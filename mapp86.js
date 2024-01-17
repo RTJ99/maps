@@ -69,19 +69,19 @@ function applyFilters() {
     filterCondition.push(countriesFilter);
   }
 
-  // If "All" is selected, show all clusters
+  // If "All" is selected, show all clusters and unclustered points
   if (selectedFeatures.includes("all")) {
-    // Show all clusters and cluster count layer
+    // Show all clusters
     map.setFilter("clusters", ["has", "point_count"]);
 
-    // Remove the filter on locations
-    map.setFilter("locations", ["any"]);
+    // Show unclustered points
+    map.setFilter("locations", ["!has", "point_count"]);
 
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
-    // Show clusters and cluster count layer based on selected filters
+    // Show clusters based on selected filters
     map.setFilter("clusters", [
       "any",
       ["!has", "point_count"],
@@ -90,6 +90,7 @@ function applyFilters() {
     ]);
   }
 }
+
 
 
 
