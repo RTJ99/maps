@@ -226,14 +226,13 @@ function searchByName() {
 }
 
 function addMapPoints() {
-map.addSource("locations", {
+  map.addSource("locations", {
     type: "geojson",
     data: mapLocations,
     cluster: true,
     clusterMaxZoom: 14,
     clusterRadius: 50,
   });
-
 
   map.addLayer({
     id: "clusters",
@@ -266,8 +265,8 @@ map.addSource("locations", {
     },
   });
 
-   map.addLayer({
-    id: "unclustered-point",
+  map.addLayer({
+    id: "locations",
     type: "circle",
     source: "locations",
     filter: ["!", ["has", "point_count"]],
@@ -278,9 +277,6 @@ map.addSource("locations", {
       "circle-stroke-color": "#fff",
     },
   });
-
- 
-    
 
   function addPopup(e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
@@ -293,63 +289,58 @@ map.addSource("locations", {
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
-map.on("click", "unclustered-point", (e) => {
-  if (e.features && e.features.length > 0) {
-    const ID = e.features[0].properties.arrayID;
-    console.log(e.features[0].geometry,"features")
-console.log(ID,"uuuuuuuu")
-    addPopup(e);
-    closeSidebar();
+  map.on("click", "locations", (e) => {
+    if (e.features && e.features.length > 0) {
+      const ID = e.features[0].properties.arrayID;
+      console.log(e.features[0].geometry, "features");
+      console.log(ID, "uuuuuuuu");
+      addPopup(e);
+      closeSidebar();
 
-    $(".locations-map_wrapper").addClass("is--show");
+      $(".locations-map_wrapper").addClass("is--show");
 
-    if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
+      if ($(".locations-map_item.is--show").length) {
+        $(".locations-map_item").removeClass("is--show");
+      }
+
+      $(".locations-map_item").eq(ID).addClass("is--show");
+    }
+  });
+
+  map.on("mouseenter", "locations", (e) => {
+    map.getCanvas().style.cursor = "pointer";
+
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const description = e.features[0].properties.description;
+
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
 
-    $(".locations-map_item").eq(ID).addClass("is--show");
-  }
-});
+    popup.setLngLat(coordinates).setHTML(description).addTo(map);
+  });
 
+  map.on("mouseleave", "locations", () => {
+    map.getCanvas().style.cursor = "";
+    popup.remove();
+  });
 
-map.on("mouseenter", "unclustered-point", (e) => {
-  map.getCanvas().style.cursor = "pointer";
-
-  const coordinates = e.features[0].geometry.coordinates.slice();
-  const description = e.features[0].properties.description;
-
-  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-  }
-
-  popup.setLngLat(coordinates).setHTML(description).addTo(map);
-});
-
-map.on("mouseleave", "unclustered-point", () => {
-  map.getCanvas().style.cursor = "";
-  popup.remove();
-});
-
-
-    //  zoom to cluster on click
-    map.on('click', 'clusters', function (e) {
-      var features = map.queryRenderedFeatures(e.point, {
-          layers: ['clusters']
-      });
-      var clusterId = features[0].properties.cluster_id;
-      map.getSource('locations').getClusterExpansionZoom(
-          clusterId,
-          function (err, zoom) {
-              if (err)
-                  return;
-              map.easeTo({
-                  center: features[0].geometry.coordinates,
-                  zoom: zoom
-              });
-          }
-      );
-        
+  //  zoom to cluster on click
+  map.on("click", "clusters", function (e) {
+    var features = map.queryRenderedFeatures(e.point, {
+      layers: ["clusters"],
     });
+    var clusterId = features[0].properties.cluster_id;
+    map
+      .getSource("locations")
+      .getClusterExpansionZoom(clusterId, function (err, zoom) {
+        if (err) return;
+        map.easeTo({
+          center: features[0].geometry.coordinates,
+          zoom: zoom,
+        });
+      });
+  });
 }
 
 map.on("load", function (e) {
