@@ -105,13 +105,18 @@ function applyFilters() {
     updateClusterPointCount();
   }
 }
-
 function updateClusterPointCount() {
   // Get the current filter for clusters
   const clusterFilter = map.getFilter("clusters");
 
-  // Get the visible features based on the cluster filter
-  const visibleClusters = map.queryRenderedFeatures({ layers: ["clusters"], filter: clusterFilter });
+  // Get all features from the "clusters" layer
+  const allClusters = map.querySourceFeatures("locations", { sourceLayer: "clusters" });
+
+  // Filter visible clusters based on the cluster filter
+  const visibleClusters = allClusters.filter((cluster) => {
+    const satisfiesFilter = map.queryRenderedFeatures({ layers: ["clusters"], filter: ["==", "cluster_id", cluster.properties.cluster_id] }).length > 0;
+    return satisfiesFilter;
+  });
 
   // Update the point count for clusters
   visibleClusters.forEach((cluster) => {
@@ -122,6 +127,7 @@ function updateClusterPointCount() {
     console.log(`Cluster ${clusterId} has ${clusterPointCount} points`);
   });
 }
+
 
 
 
