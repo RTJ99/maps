@@ -69,44 +69,59 @@ function applyFilters() {
     filterCondition.push(countriesFilter);
   }
 
-  // Update the locations data source
-  map.getSource("locations").setData({
-    type: "FeatureCollection",
-    features: mapLocations.features.filter((feature) => {
-      return filterCondition.some((filter) => {
-        if (filter === "any") return true;
-        return filter.every((condition) => {
-          return evaluateCondition(feature, condition);
-        });
-      });
-    }),
-  });
+  // If "All" is selected, log and show points with vowels in the description
+  if (selectedFeatures.includes("all")) {
+    const vowelPoints = mapLocations.features.filter((feature) =>
+      /[aeiou]/i.test(feature.properties.description)
+    );
+    console.log("Points with Vowels:", vowelPoints);
 
-  // Update the cluster data source
-  map.getSource("locations").setData({
-    type: "geojson",
-    data: mapLocations,
-    cluster: true,
-    clusterMaxZoom: 14,
-    clusterRadius: 50,
-  });
-}
+    // Filter both individual points and clusters based on selected features
+    map.setFilter("locations", [
+      "in",
+      "id",
+      ...vowelPoints.map((point) => point.properties.id),
+    ]);
 
-// Add a helper function to evaluate individual conditions
-function evaluateCondition(feature, condition) {
-  const operator = condition[0];
-  const property = condition[1];
-  const values = condition.slice(2);
+    // Set the filter for clusters based on the presence of points in the cluster
+    const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
+    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
 
-  switch (operator) {
-    case "in":
-      return values.includes(feature.properties[property]);
-    // Add more cases if needed for other operators
-    default:
-      return false;
+    // Update the point count for clusters
+    updateClusterPointCount();
+  } else {
+    // Show locations based on selected filters
+    map.setFilter("locations", filterCondition);
+
+    // Set the filter for clusters based on the presence of points in the cluster
+    map.setFilter("clusters", [
+      ">",
+      "point_count",
+      0, // Only show clusters that have at least one point
+      ...filterCondition,
+    ]);
+
+    // Update the point count for clusters
+    updateClusterPointCount();
   }
 }
 
+function updateClusterPointCount() {
+  // Get the current filter for clusters
+  const clusterFilter = map.getFilter("clusters");
+
+  // Get the visible features based on the cluster filter
+  const visibleClusters = map.queryRenderedFeatures({ layers: ["clusters"], filter: clusterFilter });
+
+  // Update the point count for clusters
+  visibleClusters.forEach((cluster) => {
+    const clusterId = cluster.properties.cluster_id;
+    const clusterPointCount = cluster.properties.point_count;
+
+    // Perform your update logic, e.g., update UI with point count
+    console.log(`Cluster ${clusterId} has ${clusterPointCount} points`);
+  });
+}
 
 
 
