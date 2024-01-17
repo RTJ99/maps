@@ -95,12 +95,7 @@ console.log("After setting filter for clusters in 'all' block");
     map.setFilter("locations", filterCondition);
 console.log("munomu")
     console.log("Filter Condition:", filterCondition);
-map.setFilter("clusters", [
-  "any",
-  ["!has", "point_count"],
-  [">", ["get", "point_count"], 0],
-  ...filterCondition,
-]);
+
   }
 }
 
