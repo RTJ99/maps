@@ -64,11 +64,11 @@ function applyFilters() {
     filterCondition.push(featuresFilter);
     console.log(filterCondition,"filter condition-------");
   }*/
-
+  
 // Check if there are selected features and the array doesn't just contain 'all'
 if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    const featuresFilter = ["any"];  // Initialize the filter with 'any'
-
+      // Initialize the filter with 'any'
+    const featuresFilter = ["any"];  
     selectedFeatures.forEach(function (selectedFeature) {
         // For each selected feature, add a condition to the filter.
         featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);
@@ -98,7 +98,7 @@ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
   } else {
     console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
-    map.setFilter("clusters", ["==", "point_count", 0], featuresFilter;
+    map.setFilter("clusters", ["==", "point_count", 0], featuresFilter);
     console.log(filterCondition,"###### filterCondition ####");
 
     map.setFilter("locations", filterCondition);
