@@ -65,10 +65,11 @@ function applyFilters() {
     console.log(filterCondition,"filter condition-------");
   }*/
   
+ // Initialize the filter with 'any'
+    let featuresFilter = ["any"];  
 // Check if there are selected features and the array doesn't just contain 'all'
 if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-      // Initialize the filter with 'any'
-    const featuresFilter = ["any"];  
+       
     selectedFeatures.forEach(function (selectedFeature) {
         // For each selected feature, add a condition to the filter.
         featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);
