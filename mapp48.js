@@ -292,6 +292,7 @@ map.addLayer({
   }
 
  map.on("click", "locations", (e) => {
+    const feature = e.features[0];
     const ID = feature.properties.arrayID;
       console.log(feature.geometry, "features");
       console.log(ID, "uuuuuuuu");
