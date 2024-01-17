@@ -93,6 +93,7 @@ console.log("After setting filter for clusters in 'all' block");
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
+    map.setFilter("clusters", filterCondition);
 console.log("munomu")
     console.log("Filter Condition:", filterCondition);
 
