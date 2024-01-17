@@ -92,8 +92,8 @@ function applyFilters() {
   } else {
     console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
-    map.setFilter("clusters", ["==", "point_count", 0], featuresFilter);
-    console.log(featuresFilter,"###### filterCondition ####");
+    map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
+    console.log(filterCondition,"###### filterCondition ####");
 
     map.setFilter("locations", filterCondition);
 
