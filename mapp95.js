@@ -52,7 +52,6 @@ function applyFilters() {
   const selectedCountries = $("#countryDropdown").val();
 
   let filterCondition = ["any"];
-  let clusterFilterCondition = ["any"];
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     const featuresFilter = ["any"];
@@ -60,9 +59,6 @@ function applyFilters() {
       featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
     });
     filterCondition.push(featuresFilter);
-
-    // Add a separate condition to filter clusters based on selected features
-    clusterFilterCondition.push(featuresFilter);
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
@@ -82,14 +78,13 @@ function applyFilters() {
     map.setFilter("locations", ["!has", "point_count"]);
 
   } else {
-    // Show only clusters that contain the selected features
+    // Show clusters and unclustered points that match the selected features
     map.setFilter("clusters", [
       "all",
       ["has", "point_count"],
-      clusterFilterCondition,
+      filterCondition,
     ]);
 
-    // Show only unclustered points that match the selected filters
     map.setFilter("locations", filterCondition);
   }
 }
