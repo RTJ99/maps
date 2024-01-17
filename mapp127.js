@@ -43,12 +43,17 @@ $(function () {
   });
 });
 function applyFilters() {
-  const selectedFeatures = $(".featureCheckbox:checked")
+  /*const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       console.log($(this).val(),"selected feature/*******************");
       return $(this).val();
     })
     .get();
+    */
+  let selectedFeatures = [
+    "Renewable Energy",
+    "Healthcare"
+];  
   console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
@@ -72,7 +77,9 @@ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
        
     selectedFeatures.forEach(function (selectedFeature) {
         // For each selected feature, add a condition to the filter.
-        featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);
+        //featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
+      featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+      
     });
 
 }
