@@ -84,15 +84,21 @@ function applyFilters() {
       ...vowelPoints.map((point) => point.properties.id),
     ]);
 
-    // Set the filter for clusters based on the cluster ID instead of individual IDs
+    // Set the filter for clusters based on the cluster_id property
     const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
-    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
+    map.setFilter("clusters", [
+      "in",
+      "cluster_id",
+      ...clusterIds,
+    ]);
   } else {
-    // Show locations and clusters based on selected filters
+    // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
-    // Set the filter for clusters based on the cluster_id property
-    map.setFilter("clusters", filterCondition);
+    // Set the filter for clusters based on the point_count property
+    map.setFilter("clusters", [
+      ">", "point_count", 0
+    ]);
   }
 }
 
