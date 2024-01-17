@@ -79,19 +79,13 @@ function applyFilters() {
 
   } else {
     // Show clusters and unclustered points that match the selected features
-    map.setFilter("clusters", [
-      "all",
-      ["has", "point_count"],
-      filterCondition,
-    ]);
+    map.setFilter("clusters", ["all", ["==", "point_count", 0], filterCondition]);
+    consoloe.log(filterCondition,"lklkl")
 
     map.setFilter("locations", filterCondition);
 
-    // Dynamically update the source data for the cluster layer
-    map.getSource("clusteredLocations").setData({
-      type: "FeatureCollection",
-      features: map.queryRenderedFeatures({ layers: ["locations"] }),
-    });
+   
+   
   }
 }
 
