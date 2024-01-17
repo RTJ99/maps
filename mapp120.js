@@ -64,6 +64,7 @@ function applyFilters() {
     filterCondition.push(featuresFilter);
     console.log(filterCondition,"filter condition-------");
   }
+  
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
     selectedCountries.forEach(function (selectedCountry) {
