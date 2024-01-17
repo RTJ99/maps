@@ -84,25 +84,27 @@ function applyFilters() {
     ]);
 
     // Set the filter for clusters based on the presence of points in the cluster
-    const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
-    console.log("Before setting filter for clusters in 'all' block");
-    console.log("Cluster IDs:", clusterIds);
-map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
-console.log("After setting filter for clusters in 'all' block");
+    const clusterIds = vowelPoints
+      .map((point) => point.properties.cluster_id)
+      .filter((id) => id !== undefined);
 
+   
+    console.log("Cluster IDs:", clusterIds);
+    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
+   
   } else {
     // Show locations based on selected filters
-    map.setFilter("locations", filterCondition);
-    map.setFilter("clusters", filterCondition);
-console.log("munomu")
-    console.log("Filter Condition:", filterCondition);
+      map.setFilter("locations", filterCondition);
+     
+      
+      // Show clusters based on selected filters
+      map.setFilter("clusters", filterCondition);
 
+      
+    console.log("munomu");
+    console.log("Filter Condition:", filterCondition);
   }
 }
-
-
-
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -250,8 +252,12 @@ function addMapPoints() {
     clusterMaxZoom: 14,
     clusterRadius: 50,
   });
-
-    
+    map.on("sourcedata", function (e) {
+      if (e.isSourceLoaded && e.sourceId === "locations") {
+        // Apply filters after the source is loaded
+        applyFilters();
+      }
+    });
 
   map.addLayer({
     id: "clusters",
@@ -283,7 +289,7 @@ function addMapPoints() {
       "text-size": 12,
     },
   });
-map.addLayer({
+  map.addLayer({
     id: "locations",
     type: "circle",
     source: "locations",
@@ -296,7 +302,6 @@ map.addLayer({
     },
   });
 
-
   function addPopup(e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const description = e.features[0].properties.description;
@@ -308,24 +313,23 @@ map.addLayer({
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
   }
 
- map.on("click", "locations", (e) => {
-   console.log(e,"thiooss")
+  map.on("click", "locations", (e) => {
+    console.log(e, "thiooss");
     const feature = e.features[0];
-   console.log(feature, "bbbb");
+    console.log(feature, "bbbb");
     const ID = feature.properties.arrayID;
-      console.log(feature.geometry, "features");
-      console.log(ID, "uuuuuuuu");
-      addPopup(e);
+    console.log(feature.geometry, "features");
+    console.log(ID, "uuuuuuuu");
+    addPopup(e);
     $(".locations-map_wrapper").addClass("is--show");
 
-      if ($(".locations-map_item.is--show").length) {
-        $(".locations-map_item").removeClass("is--show");
-      }
+    if ($(".locations-map_item.is--show").length) {
+      $(".locations-map_item").removeClass("is--show");
+    }
 
-      $(".locations-map_item").eq(ID).addClass("is--show");
-  addPopup(e);
-});
-
+    $(".locations-map_item").eq(ID).addClass("is--show");
+    addPopup(e);
+  });
 
   map.on("mouseenter", "locations", (e) => {
     map.getCanvas().style.cursor = "pointer";
