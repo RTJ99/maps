@@ -76,15 +76,17 @@ function applyFilters() {
   // If "All" is selected, show all clusters and unclustered points
   if (selectedFeatures.includes("all")) {
     // Show all clusters
+    console.log("********** includes all ******** ");
     map.setFilter("clusters", ["has", "point_count"]);
 
     // Show unclustered points
     map.setFilter("locations", ["!has", "point_count"]);
 
   } else {
+    console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
     map.setFilter("clusters", ["==", "point_count", 0], ["Tourism","Healthcare"]);
-    console.log(filterCondition,"lklkl")
+    //console.log(filterCondition,"lklkl")
 
     map.setFilter("locations", filterCondition);
 
