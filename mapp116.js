@@ -58,7 +58,7 @@ function applyFilters() {
     console.log("we are here");
     const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
-      featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+      featuresFilter.push(selectedFeature);
     });
     console.log(selectedFeatures,"selected features++++++++");
     filterCondition.push(featuresFilter);
