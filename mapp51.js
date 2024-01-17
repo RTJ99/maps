@@ -292,13 +292,13 @@ map.addLayer({
   }
 
  map.on("click", "locations", (e) => {
-   // console.log(e,"thiooss")
-   //  const feature = e.features[0];
-   // console.log(feature, "bbbb");
-   //  const ID = feature.properties.arrayID;
-   //    console.log(feature.geometry, "features");
-   //    console.log(ID, "uuuuuuuu");
-      addPopup(e);
+   console.log(e,"thiooss")
+    const feature = e.features[0];
+   console.log(feature, "bbbb");
+    const ID = feature.properties.arrayID;
+      console.log(feature.geometry, "features");
+      console.log(ID, "uuuuuuuu");
+      // addPopup(e);
       closeSidebar();
   addPopup(e);
 });
