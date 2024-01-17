@@ -52,11 +52,11 @@ function applyFilters() {
   console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition = [];
+  let filterCondition = ["any"];
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
-    const featuresFilter = [];
+    const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
     });
