@@ -85,8 +85,11 @@ function applyFilters() {
 
     // Set the filter for clusters based on the presence of points in the cluster
     const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
-    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
-    console.log("here")
+    console.log("Before setting filter for clusters in 'all' block");
+    console.log("Cluster IDs:", clusterIds);
+map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
+console.log("After setting filter for clusters in 'all' block");
+
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
