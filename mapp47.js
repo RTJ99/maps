@@ -292,7 +292,12 @@ map.addLayer({
   }
 
  map.on("click", "locations", (e) => {
-  console.log("smthn")
+    const ID = feature.properties.arrayID;
+      console.log(feature.geometry, "features");
+      console.log(ID, "uuuuuuuu");
+      addPopup(e);
+      closeSidebar();
+  addPopup(e);
 });
 
 
