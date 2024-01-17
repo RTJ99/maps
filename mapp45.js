@@ -234,6 +234,19 @@ function addMapPoints() {
     clusterRadius: 50,
   });
 
+    map.addLayer({
+    id: "locations",
+    type: "circle",
+    source: "locations",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": "#11b4da",
+      "circle-radius": 7,
+      "circle-stroke-width": 1,
+      "circle-stroke-color": "#fff",
+    },
+  });
+
   map.addLayer({
     id: "clusters",
     type: "circle",
@@ -265,18 +278,7 @@ function addMapPoints() {
     },
   });
 
-  map.addLayer({
-    id: "locations",
-    type: "circle",
-    source: "locations",
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#11b4da",
-      "circle-radius": 7,
-      "circle-stroke-width": 1,
-      "circle-stroke-color": "#fff",
-    },
-  });
+
 
   function addPopup(e) {
     const coordinates = e.features[0].geometry.coordinates.slice();
