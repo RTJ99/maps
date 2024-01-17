@@ -45,11 +45,11 @@ $(function () {
 function applyFilters() {
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
-      console.log(this.value,"selected feature/*******************");
-      return $(this).value;
+      console.log($(this).val(),"selected feature/*******************");
+      return $(this).val();
     })
     .get();
-
+  console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
   let filterCondition = ["any"];
@@ -64,7 +64,6 @@ function applyFilters() {
     filterCondition.push(featuresFilter);
     console.log(filterCondition,"filter condition-------");
   }
-console.log(selectedFeatures,"selected features");
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
     selectedCountries.forEach(function (selectedCountry) {
