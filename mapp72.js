@@ -93,8 +93,9 @@ function applyFilters() {
 console.log("munomu")
 map.setFilter("clusters", [
   "any",
+  ["!has", "point_count"],
+  [">", ["get", "point_count"], 0],
   ...filterCondition,
-  [">", ["case", ["has", "point_count"], ["get", "point_count"], 0]],
 ]);
   }
 }
