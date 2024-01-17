@@ -89,7 +89,7 @@ function applyFilters() {
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
-
+console.log("munomu")
   map.setFilter("clusters", [
   "all",
   ...filterCondition,
