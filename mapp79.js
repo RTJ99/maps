@@ -51,14 +51,16 @@ function applyFilters() {
 
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition = ["any"];
+  let filterCondition;
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
     });
-    filterCondition.push(featuresFilter);
+    filterCondition = ["all", featuresFilter];
+  } else {
+    filterCondition = ["all"];
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
