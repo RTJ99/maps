@@ -85,8 +85,8 @@ function applyFilters() {
   } else {
     console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
-    map.setFilter("clusters", ["==", "point_count", 0], ["Tourism","Healthcare"]);
-    //console.log(filterCondition,"lklkl")
+    map.setFilter("clusters", ["==", "point_count", 0],filterCondition);
+    console.log(filterCondition,"###### filterCondition ####");
 
     map.setFilter("locations", filterCondition);
 
