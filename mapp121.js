@@ -54,7 +54,7 @@ function applyFilters() {
 
   let filterCondition = ["any"];
 
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+ /* if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
     const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
@@ -63,7 +63,23 @@ function applyFilters() {
     console.log(selectedFeatures,"selected features++++++++");
     filterCondition.push(featuresFilter);
     console.log(filterCondition,"filter condition-------");
-  }
+  }*/
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    console.log("we are here");
+    const featuresFilter = ["any"];  // Initialize the filter with 'any'
+
+    selectedFeatures.forEach(function (selectedFeature) {
+        // For each selected feature, add a condition to the filter.
+        // This condition checks if the 'features' array in the properties of each feature includes the selected feature.
+        featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);
+    });
+
+    console.log(selectedFeatures, "selected features++++++++");
+    filterCondition.push(featuresFilter);  // Add the constructed filter to the filterCondition array
+    console.log(filterCondition, "filter condition-------");
+}
+
+  
   
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
