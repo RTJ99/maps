@@ -91,6 +91,7 @@ function applyFilters() {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 console.log("munomu")
+    console.log("Filter Condition:", filterCondition);
 map.setFilter("clusters", [
   "any",
   ["!has", "point_count"],
