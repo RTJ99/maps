@@ -42,7 +42,6 @@ $(function () {
     applyFilters();
   });
 });
-
 function applyFilters() {
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
@@ -84,19 +83,20 @@ function applyFilters() {
       ...vowelPoints.map((point) => point.properties.id),
     ]);
 
-    // Set the filter for clusters based on the cluster_id property
+    // Set the filter for clusters based on the presence of points in the cluster
     const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
-    map.setFilter("clusters", [
-      "in",
-      "cluster_id",
-      ...clusterIds,
-    ]);
+    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
-    // Set the filter for clusters based on the point_count property
-    map.setFilter("clusters", ["all", filterCondition, [">", "point_count", 0]]);
+    // Set the filter for clusters based on the presence of points in the cluster
+    map.setFilter("clusters", [
+      ">",
+      "point_count",
+      0, // Only show clusters that have at least one point
+      ...filterCondition
+    ]);
   }
 }
 
