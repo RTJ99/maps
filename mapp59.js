@@ -69,36 +69,44 @@ function applyFilters() {
     filterCondition.push(countriesFilter);
   }
 
-  // If "All" is selected, log and show points with vowels in the description
-  if (selectedFeatures.includes("all")) {
-    const vowelPoints = mapLocations.features.filter((feature) =>
-      /[aeiou]/i.test(feature.properties.description)
-    );
-    console.log("Points with Vowels:", vowelPoints);
+  // Update the locations data source
+  map.getSource("locations").setData({
+    type: "FeatureCollection",
+    features: mapLocations.features.filter((feature) => {
+      return filterCondition.some((filter) => {
+        if (filter === "any") return true;
+        return filter.every((condition) => {
+          return evaluateCondition(feature, condition);
+        });
+      });
+    }),
+  });
 
-    // Filter both individual points and clusters based on selected features
-    map.setFilter("locations", [
-      "in",
-      "id",
-      ...vowelPoints.map((point) => point.properties.id),
-    ]);
+  // Update the cluster data source
+  map.getSource("locations").setData({
+    type: "geojson",
+    data: mapLocations,
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 50,
+  });
+}
 
-    // Set the filter for clusters based on the presence of points in the cluster
-    const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
-    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
-  } else {
-    // Show locations based on selected filters
-    map.setFilter("locations", filterCondition);
+// Add a helper function to evaluate individual conditions
+function evaluateCondition(feature, condition) {
+  const operator = condition[0];
+  const property = condition[1];
+  const values = condition.slice(2);
 
-    // Set the filter for clusters based on the presence of points in the cluster
-    map.setFilter("clusters", [
-      ">",
-      "point_count",
-      0, // Only show clusters that have at least one point
-      ...filterCondition
-    ]);
+  switch (operator) {
+    case "in":
+      return values.includes(feature.properties[property]);
+    // Add more cases if needed for other operators
+    default:
+      return false;
   }
 }
+
 
 
 
