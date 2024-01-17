@@ -83,22 +83,48 @@ function applyFilters() {
       ...vowelPoints.map((point) => point.properties.id),
     ]);
 
-    // Remove clusters
-    map.setFilter("clusters", ["==", "point_count", 0]);
+    // Remove clusters and cluster count layer
+    map.removeLayer("clusters");
+    map.removeLayer("cluster-count");
 
   } else {
     // Show locations based on selected filters
     map.setFilter("locations", filterCondition);
 
-    // Show clusters based on selected filters
-    map.setFilter("clusters", [
-      "any",
-      ["!has", "point_count"],
-      [">", ["get", "point_count"], 0],
-      ...filterCondition,
-    ]);
+    // Show clusters and cluster count layer based on selected filters
+    map.addLayer({
+      id: "clusters",
+      type: "circle",
+      source: "locations",
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          "#51bbd6",
+          100,
+          "#f1f075",
+          750,
+          "#f28cb1",
+        ],
+        "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      },
+    });
+
+    map.addLayer({
+      id: "cluster-count",
+      type: "symbol",
+      source: "locations",
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": ["get", "point_count_abbreviated"],
+        "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+        "text-size": 12,
+      },
+    });
   }
 }
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
