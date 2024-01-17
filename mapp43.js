@@ -290,6 +290,7 @@ function addMapPoints() {
   }
 
   map.on("click", "locations", (e) => {
+    try{
     if (e.features && e.features.length > 0) {
       const ID = e.features[0].properties.arrayID;
       console.log(e.features[0].geometry, "features");
@@ -305,6 +306,9 @@ function addMapPoints() {
 
       $(".locations-map_item").eq(ID).addClass("is--show");
     }
+    }catch (error) {
+    console.error("Error in click event handler:", error);
+  }
   });
 
   map.on("mouseenter", "locations", (e) => {
