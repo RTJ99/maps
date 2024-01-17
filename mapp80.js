@@ -51,16 +51,14 @@ function applyFilters() {
 
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition;
+  let filterCondition = ["any"];
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
     });
-    filterCondition = ["all", featuresFilter];
-  } else {
-    filterCondition = ["all"];
+    filterCondition.push(featuresFilter);
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
@@ -71,41 +69,41 @@ function applyFilters() {
     filterCondition.push(countriesFilter);
   }
 
+  // If "All" is selected, log and show points with vowels in the description
   if (selectedFeatures.includes("all")) {
-    // Filter all points with vowels in the description
     const vowelPoints = mapLocations.features.filter((feature) =>
       /[aeiou]/i.test(feature.properties.description)
     );
     console.log("Points with Vowels:", vowelPoints);
 
-    if (vowelPoints.length > 0) {
-      // Filter both individual points and clusters based on selected features
-      map.setFilter("locations", [
-        "in",
-        "id",
-        ...vowelPoints.map((point) => point.properties.id),
-      ]);
+    // Filter both individual points and clusters based on selected features
+    map.setFilter("locations", [
+      "in",
+      "id",
+      ...vowelPoints.map((point) => point.properties.id),
+    ]);
 
-      // Set the filter for clusters based on the presence of points in the cluster
+    // Set the filter for clusters based on the presence of points in the cluster
       const clusterIds = vowelPoints.map((point) => point.properties.cluster_id);
-      console.log("Cluster IDs:", clusterIds);
-      map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
-    } else {
-      // No points with vowels found, reset filters
-      map.setFilter("locations", ["all"]);
-      map.setFilter("clusters", ["all"]);
-    }
+      
+
+   
+    console.log("Cluster IDs:", clusterIds);
+    map.setFilter("clusters", ["in", "cluster_id", ...clusterIds]);
+   
   } else {
     // Show locations based on selected filters
-    map.setFilter("locations", filterCondition);
+      map.setFilter("locations", filterCondition);
+     
+      
+      // Show clusters based on selected filters
+      map.setFilter("clusters", filterCondition);
 
-    // Show clusters based on selected filters
-    map.setFilter("clusters", filterCondition);
+      
+    console.log("munomu");
+    console.log("Filter Condition:", filterCondition);
   }
-
-  console.log("Filter Condition:", filterCondition);
 }
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
