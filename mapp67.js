@@ -91,11 +91,11 @@ function applyFilters() {
     map.setFilter("locations", filterCondition);
 
     // Set the filter for clusters based on the presence of points in the cluster
-    map.setFilter("clusters", [
+  map.setFilter("clusters", [
   "in",
   "cluster_id",
   ...filterCondition,
-  ["!=", ["get", "point_count"], 0], // Only show clusters with unclustered points
+  ["!=", ["case", ["has", "point_count"], ["get", "cluster_id"], ""], ""],
 ]);
   }
 }
