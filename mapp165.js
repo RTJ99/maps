@@ -141,20 +141,7 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  // Use native JavaScript filter to filter the GeoJSON data based on the selected features
-  let filteredGeoJSON = mapLocations.features;
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    filteredGeoJSON = mapLocations.features.filter(function (feature) {
-      return selectedFeatures.includes(feature.properties.features);
-    });
-  }
-
-  // Apply combined filters to both the clusters and locations layers
-  map.getSource("locations").setData({
-    type: "FeatureCollection",
-    features: filteredGeoJSON,
-  });
-  map.setFilter("clusters", combinedFilter);
+  // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
 }
 
@@ -402,9 +389,12 @@ function addMapPoints() {
 
   //  zoom to cluster on click
   map.on("click", "clusters", function (e) {
-    var features = map.queryRenderedFeatures(e.point, {
-      layers: ["clusters"],
-    });
+  var features = map.queryRenderedFeatures(e.point, {
+    layers: ["clusters"],
+  });
+
+  if (features.length > 0 && features[0].properties.cluster) {
+    // Handle cluster click
     var clusterId = features[0].properties.cluster_id;
     map
       .getSource("locations")
@@ -415,8 +405,22 @@ function addMapPoints() {
           zoom: zoom,
         });
       });
-  });
-}
+  } else {
+    // Handle individual point click
+    addPopup(e);
+    $(".locations-map_wrapper").addClass("is--show");
+
+    if ($(".locations-map_item.is--show").length) {
+      $(".locations-map_item").removeClass("is--show");
+    }
+
+    const feature = e.features[0];
+    const ID = feature.properties.arrayID;
+
+    $(".locations-map_item").eq(ID).addClass("is--show");
+    addPopup(e);
+  }
+});
 
 map.on("load", function (e) {
   const defaultFeature = {
