@@ -99,7 +99,7 @@ function applyFilters() {
     // Combine the "point_count" filter with your custom filterCondition
 let combinedFilter = [
     "all",
-    ["==", ["get", "point_count"], 0], // Condition to check point_count
+    [">", ["get", "point_count"], 0], // Condition to check point_count
     filterCondition // Your custom filter condition
 ];
 
