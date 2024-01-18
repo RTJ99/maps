@@ -141,12 +141,12 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  // Use Turf.js to filter the GeoJSON data based on the selected features
+  // Use native JavaScript filter to filter the GeoJSON data based on the selected features
   let filteredGeoJSON = mapLocations.features;
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    filteredGeoJSON = turf.filter(mapLocations.features, 'features', (feature) =>
-      selectedFeatures.includes(feature.properties.features)
-    );
+    filteredGeoJSON = mapLocations.features.filter(function (feature) {
+      return selectedFeatures.includes(feature.properties.features);
+    });
   }
 
   // Apply combined filters to both the clusters and locations layers
