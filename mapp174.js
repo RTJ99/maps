@@ -133,14 +133,16 @@ function applyFilters() {
     : ["all"];
 
   // Combine feature and country filters
-  let combinedFilter = ["all", featureFilter, countryFilter];
+  let combinedFilter = ["any", featureFilter, countryFilter];
 
   console.log("Combined Filter:", combinedFilter);
 
   // Use native JavaScript filter to filter the GeoJSON data based on the selected features
   let filteredGeoJSON = mapLocations.features;
+   console.log(filteredGeoJSON,"filtered before filter");
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     filteredGeoJSON = mapLocations.features.filter(function (feature) {
+      console.log(filteredGeoJSON,"filtered after filter");
       return selectedFeatures.includes(feature.properties.features);
     });
   }
@@ -150,6 +152,7 @@ function applyFilters() {
   let locations = [];
 
   filteredGeoJSON.forEach(function (feature) {
+    console.log(feature,"feature");
     if (feature.properties.cluster) {
       clusters.push(feature);
     } else {
