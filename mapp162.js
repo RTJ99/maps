@@ -31,46 +31,54 @@ $(function () {
     );
   });
 
-checkboxContainer.on("change", ".featureCheckbox", function () {
-  if ($(this).val() === "all") {
-    // Uncheck other checkboxes when "All" is checked
-    $(".featureCheckbox").not(this).prop("checked", false);
-  } else {
-    // Uncheck the "All" checkbox when other checkboxes are checked
-    $("#allCheckbox").prop("checked", false);
-  }
-  applyFilters();
+ checkboxContainer.on("change", ".featureCheckbox", function () {
+   if ($(this).val() === "all") {
+     // Uncheck other checkboxes when "All" is checked
+     $(".featureCheckbox").not(this).prop("checked", false);
+   } else {
+     // Uncheck the "All" checkbox when other checkboxes are checked
+     $("#allCheckbox").prop("checked", false);
+   }
+   applyFilters();
 
-  // Call filterMapFeatures when a checkbox is clicked
-  filterMapFeatures($(".featureCheckbox:checked").map(function () {
-    return $(this).val();
-  }).get());
+   // Call filterMapFeatures when a checkbox is clicked
+   filterMapFeatures(
+     $(".featureCheckbox:checked")
+       .map(function () {
+         return $(this).val();
+       })
+       .get()
+   );
+ });
+
 });
-
 function applyFilters() {
   let filterCondition = ["all"]; // Initial filter condition
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
-      console.log($(this).val(),"selected feature/*******************");
+      console.log($(this).val(), "selected feature/*******************");
       return $(this).val();
     })
     .get();
-    
-  console.log(selectedFeatures,"selected features ******************");
+
+  console.log(selectedFeatures, "selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
- if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
     let featuresFilter = ["any"]; // Initialize featuresFilter
     selectedFeatures.forEach(function (selectedFeature) {
-      featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
+      featuresFilter.push([
+        "in",
+        selectedFeature,
+        ["get", "features", ["properties"]],
+      ]);
     });
-    console.log(selectedFeatures,"selected features++++++++");
-    
-   filterCondition = featuresFilter;
-   console.log(filterCondition,"filter condition-------");
+    console.log(selectedFeatures, "selected features++++++++");
+
+    filterCondition = featuresFilter;
+    console.log(filterCondition, "filter condition-------");
   }
-  
 
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
@@ -78,7 +86,7 @@ function applyFilters() {
     selectedCountries.forEach(function (selectedCountry) {
       countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
     });
-   
+
     //filterCondition.push(countriesFilter);
   }
 
@@ -90,32 +98,24 @@ function applyFilters() {
 
     // Show unclustered points
     map.setFilter("locations", ["!has", "point_count"]);
-
   } else {
     console.log("********** filtered ******** ");
     // Show clusters and unclustered points that match the selected features
     //map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
     // Combine the "point_count" filter with your custom filterCondition
-let combinedFilter = [
-    "all",
-    ["has", ["get", "point_count"]], // Condition to check point_count
-    filterCondition // Your custom filter condition
-];
+    let combinedFilter = [
+      "all",
+      ["has", ["get", "point_count"]], // Condition to check point_count
+      filterCondition, // Your custom filter condition
+    ];
 
-// Apply the combined filter to the "clusters" layer
-map.setFilter("clusters", combinedFilter);   
-console.log(filterCondition,"###### filterCondition ####");
+    // Apply the combined filter to the "clusters" layer
+    map.setFilter("clusters", combinedFilter);
+    console.log(filterCondition, "###### filterCondition ####");
 
     //map.setFilter("locations", filterCondition);
-
-   
-   
   }
 }
-
-
-
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -294,8 +294,8 @@ function addMapPoints() {
       "text-size": 12,
     },
     paint: {
-    "text-color": "#ffffff"
-  }
+      "text-color": "#ffffff",
+    },
   });
   map.addLayer({
     id: "locations",
@@ -508,9 +508,8 @@ function filterMapFeatures(selectedFeatures) {
   let combinedFilter = [
     "all",
     ["has", ["get", "point_count"]], // Condition to check point_count
-    ["in", selectedFeatures, ["get", "features", ["properties"]]] // Your custom filter condition
+    ["in", selectedFeatures, ["get", "features", ["properties"]]], // Your custom filter condition
   ];
 
   map.setFilter("clusters", combinedFilter);
 }
-
