@@ -139,35 +139,36 @@ function applyFilters() {
 
   // Use native JavaScript filter to filter the GeoJSON data based on the selected features
  // Use native JavaScript filter to filter the GeoJSON data based on the selected features
+// Use native JavaScript filter to filter the GeoJSON data based on the selected features
 let filteredGeoJSON = mapLocations.features;
 console.log(filteredGeoJSON, "filtered before filter");
 
 if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-  filteredGeoJSON = mapLocations.features.filter(function (feature) {
+  clusters = [];
+  locations = [];
+
+  mapLocations.features.forEach(function (feature) {
+    console.log(feature, "feature++++");
     if (feature.properties.cluster) {
       // Check if any selected feature is in the cluster
-      return feature.properties.features.some(feature => selectedFeatures.includes(feature));
+      if (feature.properties.features.some(feature => selectedFeatures.includes(feature))) {
+        clusters.push(feature);
+      }
     } else {
       // For non-cluster features
-      return selectedFeatures.includes(feature.properties.features);
+      if (selectedFeatures.includes(feature.properties.features)) {
+        locations.push(feature);
+      }
     }
   });
+
+  // Override filteredGeoJSON with the combined clusters and locations
+  filteredGeoJSON = clusters.concat(locations);
 }
 
-  
+console.log("Clusters:", clusters);
+console.log("Locations:", locations);
 
-  // Separate cluster and non-cluster features
-  let clusters = [];
-  let locations = [];
-
-  filteredGeoJSON.forEach(function (feature) {
-    console.log(feature,"feature++++");
-    if (feature.properties.cluster) {
-      clusters.push(feature);
-    } else {
-      locations.push(feature);
-    }
-  });
 
   console.log("Clusters:", clusters);
   console.log("Locations:", locations);
