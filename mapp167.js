@@ -141,9 +141,37 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  // Apply the combined filter to both clusters and locations
+  // Use native JavaScript filter to filter the GeoJSON data based on the selected features
+  let filteredGeoJSON = mapLocations.features;
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    filteredGeoJSON = mapLocations.features.filter(function (feature) {
+      return selectedFeatures.includes(feature.properties.features);
+    });
+  }
+
+  // Recalculate cluster counts based on filtered data
+  let clusterCounts = {};
+  filteredGeoJSON.forEach(function (feature) {
+    let clusterId = feature.properties.cluster_id;
+    clusterCounts[clusterId] = (clusterCounts[clusterId] || 0) + 1;
+  });
+
+  // Update cluster counts in the source data
+  mapLocations.features.forEach(function (feature) {
+    let clusterId = feature.properties.cluster_id;
+    feature.properties.point_count = clusterCounts[clusterId] || 0;
+  });
+
+  // Apply combined filters to both the clusters and locations layers
+  map.getSource("locations").setData({
+    type: "FeatureCollection",
+    features: filteredGeoJSON,
+  });
+  map.getSource("locations").getClusterExpansionZoom({clusterId: 0});
+  map.setFilter("clusters", combinedFilter);
   map.setFilter("locations", combinedFilter);
 }
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
