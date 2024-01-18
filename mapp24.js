@@ -43,7 +43,7 @@ $(function () {
   });
 });
 function applyFilters() {
-  let filterCondition = []; // Initial filter condition
+  let filterCondition = ["any"]; // Initial filter condition
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       console.log($(this).val(),"selected feature/*******************");
@@ -56,7 +56,7 @@ function applyFilters() {
 
  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
-    let featuresFilter = []; // Initialize featuresFilter
+    let featuresFilter = ["any"]; // Initialize featuresFilter
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
     });
