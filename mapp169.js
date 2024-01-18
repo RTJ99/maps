@@ -111,6 +111,8 @@ $(function () {
 }*/
 
 function applyFilters() {
+  console.log("Applying filters...");
+
   let selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       return $(this).val();
@@ -118,6 +120,9 @@ function applyFilters() {
     .get();
 
   let selectedCountries = $("#countryDropdown").val();
+
+  console.log("Selected Features:", selectedFeatures);
+  console.log("Selected Countries:", selectedCountries);
 
   let featureFilter = ["any"];
   selectedFeatures.forEach(function (feature) {
@@ -141,6 +146,8 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
+  console.log("Combined Filter:", combinedFilter);
+
   // Use native JavaScript filter to filter the GeoJSON data based on the selected features
   let filteredGeoJSON = mapLocations.features;
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
@@ -161,6 +168,9 @@ function applyFilters() {
     }
   });
 
+  console.log("Clusters:", clusters);
+  console.log("Locations:", locations);
+
   // Update cluster counts in the source data
   clusters.forEach(function (cluster) {
     let clusterId = cluster.properties.cluster_id;
@@ -168,8 +178,12 @@ function applyFilters() {
     cluster.properties.point_count = clusterCount;
   });
 
+  console.log("Updated Clusters:", clusters);
+
   // Combine cluster and location features
   let updatedGeoJSON = clusters.concat(locations);
+
+  console.log("Updated GeoJSON:", updatedGeoJSON);
 
   // Apply combined filters to both the clusters and locations layers
   map.getSource("locations").setData({
@@ -178,6 +192,8 @@ function applyFilters() {
   });
   map.setFilter("clusters", combinedFilter);
   map.setFilter("locations", combinedFilter);
+
+  console.log("Filters applied successfully.");
 }
 
 
