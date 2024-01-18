@@ -129,17 +129,16 @@ function applyFilters() {
     featureFilter.push(["in", ["get", "features"], ["literal", selectedFeatures]]);
   }
 
-  let countryFilter = ["any"];
-  selectedCountries.forEach(function (country) {
-    countryFilter.push(["==", ["get", "country"], country]);
-  });
-
   let combinedFilter = ["all"];
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     combinedFilter.push(featureFilter);
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
+    let countryFilter = ["any"];
+    selectedCountries.forEach(function (country) {
+      countryFilter.push(["==", ["get", "country"], country]);
+    });
     combinedFilter.push(countryFilter);
   }
 
