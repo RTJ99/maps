@@ -31,65 +31,91 @@ $(function () {
     );
   });
 
-  checkboxContainer.on("change", ".featureCheckbox", function () {
-    if ($(this).val() === "all") {
-      // Uncheck other checkboxes when "All" is checked
-      $(".featureCheckbox").not(this).prop("checked", false);
-    } else {
-      // Uncheck the "All" checkbox when other checkboxes are checked
-      $("#allCheckbox").prop("checked", false);
-    }
-    applyFilters();
-  });
+checkboxContainer.on("change", ".featureCheckbox", function () {
+  if ($(this).val() === "all") {
+    // Uncheck other checkboxes when "All" is checked
+    $(".featureCheckbox").not(this).prop("checked", false);
+  } else {
+    // Uncheck the "All" checkbox when other checkboxes are checked
+    $("#allCheckbox").prop("checked", false);
+  }
+  applyFilters();
+
+  // Call filterMapFeatures when a checkbox is clicked
+  filterMapFeatures($(".featureCheckbox:checked").map(function () {
+    return $(this).val();
+  }).get());
 });
+
 function applyFilters() {
+  let filterCondition = ["all"]; // Initial filter condition
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
+      console.log($(this).val(),"selected feature/*******************");
       return $(this).val();
     })
     .get();
-
+    
+  console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition = ["any"];
-
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    const featuresFilter = ["any"];
+ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    console.log("we are here");
+    let featuresFilter = ["any"]; // Initialize featuresFilter
     selectedFeatures.forEach(function (selectedFeature) {
-      featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
+      featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
     });
-    filterCondition.push(featuresFilter);
+    console.log(selectedFeatures,"selected features++++++++");
+    
+   filterCondition = featuresFilter;
+   console.log(filterCondition,"filter condition-------");
   }
+  
 
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
+    console.log("in countries filter");
     selectedCountries.forEach(function (selectedCountry) {
       countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
     });
-    filterCondition.push(countriesFilter);
+   
+    //filterCondition.push(countriesFilter);
   }
 
   // If "All" is selected, show all clusters and unclustered points
   if (selectedFeatures.includes("all")) {
     // Show all clusters
+    console.log("********** includes all ******** ");
     map.setFilter("clusters", ["has", "point_count"]);
 
     // Show unclustered points
     map.setFilter("locations", ["!has", "point_count"]);
-  } else {
-    // Show only unclustered points that match the selected filters
-    map.setFilter("locations", filterCondition);
 
-      // show only clusters that match the selected filters
-      map.setFilter("clusters", filterCondition);
-      //   show the count of filtered features in the cluster label
-        map.setLayoutProperty("cluster-count", "text-field", [
-            "coalesce",
-            ["to-string", ["get", "point_count"]],
-            "",
-        ]);
+  } else {
+    console.log("********** filtered ******** ");
+    // Show clusters and unclustered points that match the selected features
+    //map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
+    // Combine the "point_count" filter with your custom filterCondition
+let combinedFilter = [
+    "all",
+    ["has", ["get", "point_count"]], // Condition to check point_count
+    filterCondition // Your custom filter condition
+];
+
+// Apply the combined filter to the "clusters" layer
+map.setFilter("clusters", combinedFilter);   
+console.log(filterCondition,"###### filterCondition ####");
+
+    //map.setFilter("locations", filterCondition);
+
+   
+   
   }
 }
+
+
+
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -247,11 +273,11 @@ function addMapPoints() {
       "circle-color": [
         "step",
         ["get", "point_count"],
-        "#51bbd6",
+        "#9A0619",
         100,
-        "#f1f075",
+        "#9A0619",
         750,
-        "#f28cb1",
+        "#9A0619",
       ],
       "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
     },
@@ -267,6 +293,9 @@ function addMapPoints() {
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
       "text-size": 12,
     },
+    paint: {
+    "text-color": "#ffffff"
+  }
   });
   map.addLayer({
     id: "locations",
@@ -274,7 +303,7 @@ function addMapPoints() {
     source: "locations",
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#11b4da",
+      "circle-color": "#9A0619",
       "circle-radius": 7,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
@@ -458,12 +487,12 @@ function clearFilters() {
   applyFilters();
 }
 
-function filterMapFeatures(selectedFeatureText) {
+function filterMapFeatures(selectedFeatures) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
-    feature.properties.features.includes(selectedFeatureText)
+    selectedFeatures.includes(feature.properties.features[0])
   );
 
-  map.setFilter("locations", ["in", selectedFeatureText, ["get", "features"]]);
+  map.setFilter("locations", ["in", selectedFeatures, ["get", "features"]]);
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
@@ -474,4 +503,14 @@ function filterMapFeatures(selectedFeatureText) {
   } else {
     toggleSidebar("left");
   }
+
+  // Apply the combined filter to the "clusters" layer
+  let combinedFilter = [
+    "all",
+    ["has", ["get", "point_count"]], // Condition to check point_count
+    ["in", selectedFeatures, ["get", "features", ["properties"]]] // Your custom filter condition
+  ];
+
+  map.setFilter("clusters", combinedFilter);
 }
+
