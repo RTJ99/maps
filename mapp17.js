@@ -43,6 +43,7 @@ $(function () {
   });
 });
 function applyFilters() {
+  let filterCondition = ["all"]; // Initial filter condition
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       console.log($(this).val(),"selected feature/*******************");
@@ -50,29 +51,22 @@ function applyFilters() {
     })
     .get();
     
-  /*let selectedFeatures = [
-    "Renewable Energy",
-    "Refugees"
-];  */
   console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition;
-
  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
-    const featuresFilter = ["any"];
+    let featuresFilter = ["any"]; // Initialize featuresFilter
     selectedFeatures.forEach(function (selectedFeature) {
-      //featuresFilter.push(["in",selectedFeature, ["get", "features"]]);
       featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
     });
     console.log(selectedFeatures,"selected features++++++++");
-    //filterCondition.push(featuresFilter);
+    
    filterCondition = featuresFilter;
    console.log(filterCondition,"filter condition-------");
   }
   
- 
+
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
     console.log("in countries filter");
@@ -99,7 +93,7 @@ function applyFilters() {
     // Combine the "point_count" filter with your custom filterCondition
 let combinedFilter = [
     "all",
-    [">", ["get", "point_count"], 0], // Condition to check point_count
+    ["has", ["get", "point_count"]], // Condition to check point_count
     filterCondition // Your custom filter condition
 ];
 
