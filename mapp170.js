@@ -125,11 +125,9 @@ function applyFilters() {
   console.log("Selected Countries:", selectedCountries);
 
   let featureFilter = ["any"];
-  selectedFeatures.forEach(function (feature) {
-    if (feature !== "all") {
-      featureFilter.push(["in", feature, ["get", "features"]]);
-    }
-  });
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    featureFilter.push(["in", ["get", "features"], selectedFeatures]);
+  }
 
   let countryFilter = ["any"];
   selectedCountries.forEach(function (country) {
@@ -137,7 +135,6 @@ function applyFilters() {
   });
 
   let combinedFilter = ["all"];
-
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     combinedFilter.push(featureFilter);
   }
@@ -195,6 +192,7 @@ function applyFilters() {
 
   console.log("Filters applied successfully.");
 }
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
