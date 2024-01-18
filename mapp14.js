@@ -43,21 +43,21 @@ $(function () {
   });
 });
 function applyFilters() {
-  /*const selectedFeatures = $(".featureCheckbox:checked")
+  const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       console.log($(this).val(),"selected feature/*******************");
       return $(this).val();
     })
     .get();
-    */
-  let selectedFeatures = [
+    
+  /*let selectedFeatures = [
     "Renewable Energy",
     "Refugees"
-];  
+];  */
   console.log(selectedFeatures,"selected features ******************");
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition = ["any"];
+  let filterCondition;
 
  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
@@ -67,8 +67,9 @@ function applyFilters() {
       featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
     });
     console.log(selectedFeatures,"selected features++++++++");
-    filterCondition.push(featuresFilter);
-    console.log(filterCondition,"filter condition-------");
+    //filterCondition.push(featuresFilter);
+   filterCondition = featuresFilter;
+   console.log(filterCondition,"filter condition-------");
   }
   
  
@@ -79,7 +80,7 @@ function applyFilters() {
       countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
     });
    
-    filterCondition.push(countriesFilter);
+    //filterCondition.push(countriesFilter);
   }
 
   // If "All" is selected, show all clusters and unclustered points
