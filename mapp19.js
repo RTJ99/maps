@@ -288,6 +288,9 @@ function addMapPoints() {
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
       "text-size": 12,
     },
+    paint: {
+    "text-color": "#ffffff"
+  }
   });
   map.addLayer({
     id: "locations",
@@ -295,7 +298,7 @@ function addMapPoints() {
     source: "locations",
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#11b4da",
+      "circle-color": "#9A0619",
       "circle-radius": 7,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
