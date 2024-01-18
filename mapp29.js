@@ -42,7 +42,8 @@ $(function () {
     applyFilters();
   });
 });
-function applyFilters() {
+
+/*function applyFilters() {
   let filterCondition = ["any"]; // Initial filter condition
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
@@ -107,10 +108,44 @@ function applyFilters() {
    
    
   }
+}*/
+
+function applyFilters() {
+  let selectedFeatures = $(".featureCheckbox:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
+
+  let selectedCountries = $("#countryDropdown").val();
+
+  let featureFilter = ["any"];
+  selectedFeatures.forEach(function (feature) {
+    if (feature !== "all") {
+      // Checking if the feature is within the features array of each GeoJSON feature
+      featureFilter.push(["in", feature, ["get", "features"]]);
+    }
+  });
+
+  let countryFilter = ["any"];
+  selectedCountries.forEach(function (country) {
+    countryFilter.push(["==", ["get", "country"], country]);
+  });
+
+  let combinedFilter = ["all"];
+
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    combinedFilter.push(featureFilter);
+  }
+
+  if (selectedCountries && selectedCountries.length > 0) {
+    combinedFilter.push(countryFilter);
+  }
+
+  // Apply combined filters to both the clusters and locations layers
+  map.setFilter("clusters", combinedFilter);
+  map.setFilter("locations", combinedFilter);
 }
-
-
-
 
 
 $(".locations-map_wrapper").removeClass("is--show");
