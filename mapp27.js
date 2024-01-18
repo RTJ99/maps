@@ -96,7 +96,7 @@ function applyFilters() {
    ];
 
    // Apply the combined filter to the "clusters" layer
-   map.setFilter("clusters", combinedFilter);   
+   map.setFilter("clusters", ["has", "point_count"]);   
    console.log(combinedFilter,"###### filterCondition ####");
 
     //map.setFilter("locations",combinedFilter);
