@@ -101,7 +101,7 @@ function applyFilters() {
    map.setFilter("clusters", combinedFilter);   
    console.log(combinedFilter,"###### filterCondition ####");
 
-    map.setFilter("locations",combinedFilter);
+    //map.setFilter("locations",combinedFilter);
 
    
    
