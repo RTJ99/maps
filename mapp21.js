@@ -43,7 +43,7 @@ $(function () {
   });
 });
 function applyFilters() {
-  let filterCondition = ["all"]; // Initial filter condition
+  let filterCondition = []; // Initial filter condition
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       console.log($(this).val(),"selected feature/*******************");
@@ -56,7 +56,7 @@ function applyFilters() {
 
  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
     console.log("we are here");
-    let featuresFilter = ["any"]; // Initialize featuresFilter
+    let featuresFilter = []; // Initialize featuresFilter
     selectedFeatures.forEach(function (selectedFeature) {
       featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
     });
@@ -74,7 +74,7 @@ function applyFilters() {
       countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
     });
    
-    //filterCondition.push(countriesFilter);
+    filterCondition.push(countriesFilter);
   }
 
   // If "All" is selected, show all clusters and unclustered points
@@ -101,7 +101,7 @@ function applyFilters() {
    map.setFilter("clusters", combinedFilter);   
    console.log(combinedFilter,"###### filterCondition ####");
 
-    //map.setFilter("locations", filterCondition);
+    map.setFilter("locations", filterCondition);
 
    
    
