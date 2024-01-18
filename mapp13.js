@@ -63,7 +63,8 @@ function applyFilters() {
     console.log("we are here");
     const featuresFilter = ["any"];
     selectedFeatures.forEach(function (selectedFeature) {
-      featuresFilter.push(["in",selectedFeature, ["get", "features"]]);
+      //featuresFilter.push(["in",selectedFeature, ["get", "features"]]);
+      featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
     });
     console.log(selectedFeatures,"selected features++++++++");
     filterCondition.push(featuresFilter);
@@ -73,6 +74,7 @@ function applyFilters() {
  
   if (selectedCountries && selectedCountries.length > 0) {
     const countriesFilter = ["any"];
+    console.log("in countries filter");
     selectedCountries.forEach(function (selectedCountry) {
       countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
     });
