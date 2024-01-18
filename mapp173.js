@@ -124,23 +124,16 @@ function applyFilters() {
   console.log("Selected Features:", selectedFeatures);
   console.log("Selected Countries:", selectedCountries);
 
-  let featureFilter = ["any"];
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    featureFilter.push(["in", ["get", "features"], ["literal", selectedFeatures]]);
-  }
+  let featureFilter = selectedFeatures.length > 0 && !selectedFeatures.includes("all")
+    ? ["in", ["get", "features"], ["literal", selectedFeatures]]
+    : ["all"];
 
-  let combinedFilter = ["all"];
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    combinedFilter.push(featureFilter);
-  }
+  let countryFilter = selectedCountries && selectedCountries.length > 0
+    ? ["in", ["get", "country"], ["literal", selectedCountries]]
+    : ["all"];
 
-  if (selectedCountries && selectedCountries.length > 0) {
-    let countryFilter = ["any"];
-    selectedCountries.forEach(function (country) {
-      countryFilter.push(["==", ["get", "country"], country]);
-    });
-    combinedFilter.push(countryFilter);
-  }
+  // Combine feature and country filters
+  let combinedFilter = ["all", featureFilter, countryFilter];
 
   console.log("Combined Filter:", combinedFilter);
 
