@@ -92,11 +92,14 @@ function applyFilters() {
     //map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
     // Combine the "point_count" filter with your custom filterCondition
    let combinedFilter = [
-        ["has", "point_count"]
+       "all",
+        ["has", ["get", "point_count"]],
+        ["any", ["in", "Renewable Energy", ["get", "features"]]]
+    
    ];
 
    // Apply the combined filter to the "clusters" layer
-   map.setFilter("clusters", ["has", "point_count"]);   
+   map.setFilter("clusters", combinedFilter);   
    console.log(combinedFilter,"###### filterCondition ####");
 
     //map.setFilter("locations",combinedFilter);
