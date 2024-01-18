@@ -149,25 +149,33 @@ function applyFilters() {
     });
   }
 
-  // Recalculate cluster counts based on filtered data
-  let clusterCounts = {};
+  // Separate cluster and non-cluster features
+  let clusters = [];
+  let locations = [];
+
   filteredGeoJSON.forEach(function (feature) {
-    let clusterId = feature.properties.cluster_id;
-    clusterCounts[clusterId] = (clusterCounts[clusterId] || 0) + 1;
+    if (feature.properties.cluster) {
+      clusters.push(feature);
+    } else {
+      locations.push(feature);
+    }
   });
 
   // Update cluster counts in the source data
-  mapLocations.features.forEach(function (feature) {
-    let clusterId = feature.properties.cluster_id;
-    feature.properties.point_count = clusterCounts[clusterId] || 0;
+  clusters.forEach(function (cluster) {
+    let clusterId = cluster.properties.cluster_id;
+    let clusterCount = clusters.filter(c => c.properties.cluster_id === clusterId).length;
+    cluster.properties.point_count = clusterCount;
   });
+
+  // Combine cluster and location features
+  let updatedGeoJSON = clusters.concat(locations);
 
   // Apply combined filters to both the clusters and locations layers
   map.getSource("locations").setData({
     type: "FeatureCollection",
-    features: filteredGeoJSON,
+    features: updatedGeoJSON,
   });
-  map.getSource("locations").getClusterExpansionZoom({clusterId: 0});
   map.setFilter("clusters", combinedFilter);
   map.setFilter("locations", combinedFilter);
 }
