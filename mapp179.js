@@ -149,7 +149,7 @@ if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
 
   mapLocations.features.forEach(function (feature) {
     console.log(feature, "feature++++");
-    if (feature.properties.cluster) {
+    if (feature.properties.features) {
       // Check if any selected feature is in the cluster
       if (feature.properties.features.some(feature => selectedFeatures.includes(feature))) {
         clusters.push(feature);
