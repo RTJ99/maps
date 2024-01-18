@@ -97,7 +97,7 @@ function applyFilters() {
     map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
     console.log(filterCondition,"###### filterCondition ####");
 
-    map.setFilter("locations", filterCondition);
+    //map.setFilter("locations", filterCondition);
 
    
    
