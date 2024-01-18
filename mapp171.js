@@ -126,7 +126,7 @@ function applyFilters() {
 
   let featureFilter = ["any"];
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    featureFilter.push(["in", ["get", "features"], selectedFeatures]);
+    featureFilter.push(["in", ["get", "features"], ["literal", selectedFeatures]]);
   }
 
   let countryFilter = ["any"];
