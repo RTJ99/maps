@@ -138,15 +138,23 @@ function applyFilters() {
   console.log("Combined Filter:", combinedFilter);
 
   // Use native JavaScript filter to filter the GeoJSON data based on the selected features
-  let filteredGeoJSON = mapLocations.features;
-   console.log(filteredGeoJSON,"filtered before filter");
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    filteredGeoJSON = mapLocations.features.filter(function (feature) {
-     console.log(feature,"this is first feature")
+ // Use native JavaScript filter to filter the GeoJSON data based on the selected features
+let filteredGeoJSON = mapLocations.features;
+console.log(filteredGeoJSON, "filtered before filter");
+
+if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+  filteredGeoJSON = mapLocations.features.filter(function (feature) {
+    if (feature.properties.cluster) {
+      // Check if any selected feature is in the cluster
+      return feature.properties.features.some(feature => selectedFeatures.includes(feature));
+    } else {
+      // For non-cluster features
       return selectedFeatures.includes(feature.properties.features);
-      
-    });
-  }
+    }
+  });
+}
+
+  
 
   // Separate cluster and non-cluster features
   let clusters = [];
