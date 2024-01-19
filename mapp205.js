@@ -145,36 +145,41 @@ function applyFilters() {
 
   console.log("Combined Filter:", combinedFilter);
 
-  // Apply the combined filter to both clusters and locations
-  map.setFilter("locations", combinedFilter);
+  try {
+    // Apply the combined filter to both clusters and locations
+    map.setFilter("locations", combinedFilter);
 
-  // Update the data of the existing source
-  let filteredFeatures = mapLocations.features.filter((feature) => {
-    let satisfiesFilter = true;
-    if (combinedFilter.length > 1) {
-      satisfiesFilter = map.querySourceFeatures("locations", {
-        filter: combinedFilter,
-        sourceLayer: "locations", // Make sure to use the correct source layer
-      }).includes(feature);
-    }
-    return satisfiesFilter;
-  });
+    // Update the data of the existing source
+    let filteredFeatures = mapLocations.features.filter((feature) => {
+      let satisfiesFilter = true;
+      if (combinedFilter.length > 1) {
+        satisfiesFilter = map.querySourceFeatures("locations", {
+          filter: combinedFilter,
+          sourceLayer: "locations", // Make sure to use the correct source layer
+        }).includes(feature);
+      }
+      return satisfiesFilter;
+    });
 
-  // Update the data of the existing source
-  map.getSource("locations").setData({
-    type: "FeatureCollection",
-    features: filteredFeatures,
-  });
+    // Update the data of the existing source
+    map.getSource("locations").setData({
+      type: "FeatureCollection",
+      features: filteredFeatures,
+    });
 
-  // Reset map layers
-  map.removeLayer("clusters");
-  map.removeLayer("cluster-count");
-  map.removeLayer("locations");
-  map.removeSource("locations");
+    // Reset map layers
+    map.removeLayer("clusters");
+    map.removeLayer("cluster-count");
+    map.removeLayer("locations");
+    map.removeSource("locations");
 
-  // Add map points with the updated data
-  addMapPoints(filteredFeatures);
+    // Add map points with the updated data
+    addMapPoints(filteredFeatures);
+  } catch (error) {
+    console.error("Error applying filters:", error);
+  }
 }
+
 
 
 function filterCondition(feature, filter) {
