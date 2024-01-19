@@ -117,6 +117,8 @@ function applyFilters() {
     })
     .get();
 
+  console.log("Selected Features:", selectedFeatures);
+
   const selectedCountries = $("#countryDropdown").val();
 
   let featureFilter = ["any"];
@@ -141,6 +143,8 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
+  console.log("Combined Filter:", combinedFilter);
+
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
 
@@ -155,6 +159,8 @@ function applyFilters() {
     }
     return satisfiesFilter;
   });
+
+  console.log("Filtered Features:", filteredFeatures);
 
   // Update the data of the existing source
   map.getSource("locations").setData({
