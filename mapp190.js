@@ -162,8 +162,8 @@ function applyFilters() {
     features: filteredFeatures,
   });
 
-  // Reset map layers
-  addMapPoints();
+  // Reset map layers (if needed)
+  // addMapPoints(); // Uncomment this line if necessary
 }
 
 
