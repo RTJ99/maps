@@ -142,6 +142,7 @@ function applyFilters() {
   }
 
   // Apply the combined filter to both clusters and locations
+  map.setFilter("clusters", combinedFilter);
   map.setFilter("locations", combinedFilter);
 }
 
