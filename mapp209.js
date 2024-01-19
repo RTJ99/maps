@@ -131,20 +131,24 @@ function applyFilters() {
     countryFilter.push(["==", ["get", "country"], country]);
   });
 
-  let combinedFilter = ["all"];
+  let clusterFilter = ["has", "point_count"];
+  let unclusteredFilter = ["!has", "point_count"];
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    combinedFilter.push(featureFilter);
+    clusterFilter.push(featureFilter);
+    unclusteredFilter.push(featureFilter);
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
-    combinedFilter.push(countryFilter);
+    clusterFilter.push(countryFilter);
+    unclusteredFilter.push(countryFilter);
   }
 
-  // Apply the combined filter to both clusters and locations
-  map.setFilter("clusters", combinedFilter);
-  map.setFilter("locations", combinedFilter);
+  // Apply the filters to clusters and unclustered points separately
+  map.setFilter("clusters", clusterFilter);
+  map.setFilter("locations", unclusteredFilter);
 }
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
