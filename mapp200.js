@@ -109,7 +109,7 @@ $(function () {
    
   }
 }*/
-
+let filteredData = [];
 function applyFilters() {
   let selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
