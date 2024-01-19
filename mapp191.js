@@ -163,7 +163,7 @@ function applyFilters() {
   });
 
   // Reset map layers (if needed)
-  // addMapPoints(); // Uncomment this line if necessary
+  addMapPoints();
 }
 
 
