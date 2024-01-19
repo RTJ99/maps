@@ -141,21 +141,8 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  // Remove layers that use the source
-  if (map.getLayer("clusters")) {
-    map.removeLayer("clusters");
-  }
-  if (map.getLayer("cluster-count")) {
-    map.removeLayer("cluster-count");
-  }
-  if (map.getLayer("locations")) {
-    map.removeLayer("locations");
-  }
-
-  // Check if the source exists and remove it
-  if (map.getSource("locations")) {
-    map.removeSource("locations");
-  }
+  // Apply the combined filter to both clusters and locations
+  map.setFilter("locations", combinedFilter);
 
   // Update the map data source with the filtered features
   let filteredFeatures = mapLocations.features.filter((feature) => {
@@ -169,15 +156,10 @@ function applyFilters() {
     return satisfiesFilter;
   });
 
-  map.addSource("locations", {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: filteredFeatures,
-    },
-    cluster: true,
-    clusterMaxZoom: 14,
-    clusterRadius: 50,
+  // Update the data of the existing source
+  map.getSource("locations").setData({
+    type: "FeatureCollection",
+    features: filteredFeatures,
   });
 
   // Reset map layers
