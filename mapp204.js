@@ -160,8 +160,6 @@ function applyFilters() {
     return satisfiesFilter;
   });
 
-  console.log("Filtered Features:", filteredFeatures);
-
   // Update the data of the existing source
   map.getSource("locations").setData({
     type: "FeatureCollection",
