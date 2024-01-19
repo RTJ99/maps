@@ -169,9 +169,8 @@ function applyFilters() {
   map.removeSource("locations");
 
   // Add map points with the updated data
- addMapPoints(filteredData);
+  addMapPoints(filteredFeatures);
 }
-
 
 
 $(".locations-map_wrapper").removeClass("is--show");
