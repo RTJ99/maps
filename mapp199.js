@@ -141,7 +141,7 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  console.log("Combined Filter:", JSON.stringify(combinedFilter));
+  console.log("Combined Filter:", combinedFilter);
 
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
@@ -149,18 +149,16 @@ function applyFilters() {
   // Update the data of the existing source
   let filteredFeatures = mapLocations.features.filter((feature) => {
     let satisfiesFilter = true;
-
     if (combinedFilter.length > 1) {
-      // Check if the feature satisfies the filter conditions
-      satisfiesFilter = combinedFilter.every((filter) =>
-        filterCondition(feature, filter)
-      );
+      satisfiesFilter = map.querySourceFeatures("locations", {
+        filter: combinedFilter,
+        sourceLayer: "locations", // Make sure to use the correct source layer
+      }).includes(feature);
     }
-
     return satisfiesFilter;
   });
 
-  console.log("Filtered Features:", JSON.stringify(filteredFeatures));
+  console.log("Filtered Features:", filteredFeatures);
 
   // Update the data of the existing source
   map.getSource("locations").setData({
@@ -175,8 +173,9 @@ function applyFilters() {
   map.removeSource("locations");
 
   // Add map points with the updated data
-  addMapPoints(filteredFeatures);
+  addMapPoints(filteredData);
 }
+
 
 function filterCondition(feature, filter) {
   // Handle different types of filters (e.g., "any", "in", "==", etc.)
