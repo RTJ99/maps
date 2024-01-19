@@ -147,12 +147,14 @@ function applyFilters() {
   // Update the data of the existing source
   let filteredFeatures = mapLocations.features.filter((feature) => {
     let satisfiesFilter = true;
+
     if (combinedFilter.length > 1) {
-      satisfiesFilter = map.querySourceFeatures("locations", {
-        filter: combinedFilter,
-        sourceLayer: "locations", // Make sure to use the correct source layer
-      }).includes(feature);
+      // Check if the feature satisfies the filter conditions
+      satisfiesFilter = combinedFilter.every((filter) =>
+        filterCondition(feature, filter)
+      );
     }
+
     return satisfiesFilter;
   });
 
@@ -170,6 +172,32 @@ function applyFilters() {
 
   // Add map points with the updated data
   addMapPoints(filteredFeatures);
+}
+
+function filterCondition(feature, filter) {
+  // Handle different types of filters (e.g., "any", "in", "==", etc.)
+  if (Array.isArray(filter)) {
+    let operator = filter[0];
+    let conditions = filter.slice(1);
+
+    switch (operator) {
+      case "any":
+        return conditions.some((condition) =>
+          filterCondition(feature, condition)
+        );
+      case "in":
+        let [property, values] = conditions;
+        return values.includes(feature.properties[property]);
+      case "==":
+        let [property1, value] = conditions;
+        return feature.properties[property1] === value;
+      // Add more cases if needed
+      default:
+        return false;
+    }
+  }
+
+  return false;
 }
 
 
