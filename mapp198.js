@@ -186,17 +186,24 @@ function filterCondition(feature, filter) {
 
     switch (operator) {
       case "any":
-        return conditions.some((condition) =>
+        let anyResult = conditions.some((condition) =>
           filterCondition(feature, condition)
         );
+        console.log("anyResult:", anyResult);
+        return anyResult;
       case "in":
         let [property, values] = conditions;
-        return values.includes(feature.properties[property]);
+        let inResult = values.includes(feature.properties[property]);
+        console.log(`inResult: ${inResult} (${property} = ${feature.properties[property]})`);
+        return inResult;
       case "==":
         let [property1, value] = conditions;
-        return feature.properties[property1] === value;
+        let eqResult = feature.properties[property1] === value;
+        console.log(`eqResult: ${eqResult} (${property1} = ${feature.properties[property1]}, value = ${value})`);
+        return eqResult;
       // Add more cases if needed
       default:
+        console.log("Unknown operator:", operator);
         return false;
     }
   }
