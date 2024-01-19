@@ -169,7 +169,7 @@ function applyFilters() {
   map.removeSource("locations");
 
   // Add map points with the updated data
-  addMapPoints();
+ addMapPoints(filteredData);
 }
 
 
@@ -375,7 +375,11 @@ function addMapPoints(filteredData) {
         "circle-color": "#9A0619",
         "circle-radius": 7,
         "circle-stroke-width": 1,
-        "circle-stroke
+        "circle-stroke-color": "#fff",
+      },
+    });
+  }
+}
 
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
