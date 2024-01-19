@@ -141,9 +141,30 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  // Apply the combined filter to both clusters and locations
-  map.setFilter("locations", combinedFilter);
+  // Update the map data source with the filtered features
+  let filteredFeatures = mapLocations.features.filter((feature) => {
+    let satisfiesFilter = true;
+    if (combinedFilter.length > 1) {
+      satisfiesFilter = map.querySourceFeatures("locations", {
+        filter: combinedFilter,
+        sourceLayer: "locations", // Make sure to use the correct source layer
+      }).includes(feature);
+    }
+    return satisfiesFilter;
+  });
+
+  map.getSource("locations").setData({
+    type: "FeatureCollection",
+    features: filteredFeatures,
+  });
+
+  // Reset map layers
+  map.removeLayer("clusters");
+  map.removeLayer("cluster-count");
+  map.removeLayer("locations");
+  addMapPoints();
 }
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
