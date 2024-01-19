@@ -141,6 +141,17 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
+  // Remove layers that use the source
+  if (map.getLayer("clusters")) {
+    map.removeLayer("clusters");
+  }
+  if (map.getLayer("cluster-count")) {
+    map.removeLayer("cluster-count");
+  }
+  if (map.getLayer("locations")) {
+    map.removeLayer("locations");
+  }
+
   // Check if the source exists and remove it
   if (map.getSource("locations")) {
     map.removeSource("locations");
@@ -172,7 +183,6 @@ function applyFilters() {
   // Reset map layers
   addMapPoints();
 }
-
 
 
 
