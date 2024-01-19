@@ -135,13 +135,13 @@ function applyFilters() {
   let unclusteredFilter = ["!has", "point_count"];
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    clusterFilter.push(featureFilter);
-    unclusteredFilter.push(featureFilter);
+    clusterFilter = ["all", clusterFilter, featureFilter];
+    unclusteredFilter = ["all", unclusteredFilter, featureFilter];
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
-    clusterFilter.push(countryFilter);
-    unclusteredFilter.push(countryFilter);
+    clusterFilter = ["all", clusterFilter, countryFilter];
+    unclusteredFilter = ["all", unclusteredFilter, countryFilter];
   }
 
   // Log point count for clusters
@@ -158,6 +158,7 @@ function applyFilters() {
   map.setFilter("clusters", clusterFilter);
   map.setFilter("locations", unclusteredFilter);
 }
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
