@@ -312,12 +312,12 @@ function searchByName() {
   }
 }
 
-function addMapPoints() {
+function addMapPoints(filteredData) {
   // Check if the source already exists
   if (!map.getSource("locations")) {
     map.addSource("locations", {
       type: "geojson",
-      data: mapLocations,
+      data: filteredData || mapLocations, // Use filteredData if available, otherwise use the default mapLocations
       cluster: true,
       clusterMaxZoom: 14,
       clusterRadius: 50,
@@ -375,12 +375,7 @@ function addMapPoints() {
         "circle-color": "#9A0619",
         "circle-radius": 7,
         "circle-stroke-width": 1,
-        "circle-stroke-color": "#fff",
-      },
-    });
-  }
-}
-
+        "circle-stroke
 
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
