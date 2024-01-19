@@ -141,18 +141,8 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
-  // Get the current style
-  const style = map.getStyle();
-
-  // Remove layers that use the source
-  style.layers.forEach((layer) => {
-    if (layer.source === "locations") {
-      map.removeLayer(layer.id);
-    }
-  });
-
-  // Remove the existing source
-  if (style.sources && style.sources.locations) {
+  // Check if the source exists and remove it
+  if (map.getSource("locations")) {
     map.removeSource("locations");
   }
 
@@ -182,6 +172,7 @@ function applyFilters() {
   // Reset map layers
   addMapPoints();
 }
+
 
 
 
