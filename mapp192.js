@@ -144,7 +144,7 @@ function applyFilters() {
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
 
-  // Update the map data source with the filtered features
+  // Update the data of the existing source
   let filteredFeatures = mapLocations.features.filter((feature) => {
     let satisfiesFilter = true;
     if (combinedFilter.length > 1) {
@@ -162,7 +162,13 @@ function applyFilters() {
     features: filteredFeatures,
   });
 
-  // Reset map layers (if needed)
+  // Reset map layers
+  map.removeLayer("clusters");
+  map.removeLayer("cluster-count");
+  map.removeLayer("locations");
+  map.removeSource("locations");
+
+  // Add map points with the updated data
   addMapPoints();
 }
 
@@ -307,60 +313,74 @@ function searchByName() {
 }
 
 function addMapPoints() {
-  map.addSource("locations", {
-    type: "geojson",
-    data: mapLocations,
-    cluster: true,
-    clusterMaxZoom: 14,
-    clusterRadius: 50,
-  });
+  // Check if the source already exists
+  if (!map.getSource("locations")) {
+    map.addSource("locations", {
+      type: "geojson",
+      data: mapLocations,
+      cluster: true,
+      clusterMaxZoom: 14,
+      clusterRadius: 50,
+    });
+  }
 
-  map.addLayer({
-    id: "clusters",
-    type: "circle",
-    source: "locations",
-    filter: ["has", "point_count"],
-    paint: {
-      "circle-color": [
-        "step",
-        ["get", "point_count"],
-        "#9A0619",
-        100,
-        "#9A0619",
-        750,
-        "#9A0619",
-      ],
-      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
-    },
-  });
+  // Check if the cluster layer already exists
+  if (!map.getLayer("clusters")) {
+    map.addLayer({
+      id: "clusters",
+      type: "circle",
+      source: "locations",
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          "#9A0619",
+          100,
+          "#9A0619",
+          750,
+          "#9A0619",
+        ],
+        "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      },
+    });
+  }
 
-  map.addLayer({
-    id: "cluster-count",
-    type: "symbol",
-    source: "locations",
-    filter: ["has", "point_count"],
-    layout: {
-      "text-field": ["get", "point_count_abbreviated"],
-      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-      "text-size": 12,
-    },
-    paint: {
-      "text-color": "#ffffff",
-    },
-  });
-  map.addLayer({
-    id: "locations",
-    type: "circle",
-    source: "locations",
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#9A0619",
-      "circle-radius": 7,
-      "circle-stroke-width": 1,
-      "circle-stroke-color": "#fff",
-    },
-  });
+  // Check if the cluster-count layer already exists
+  if (!map.getLayer("cluster-count")) {
+    map.addLayer({
+      id: "cluster-count",
+      type: "symbol",
+      source: "locations",
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": ["get", "point_count_abbreviated"],
+        "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+        "text-size": 12,
+      },
+      paint: {
+        "text-color": "#ffffff",
+      },
+    });
+  }
+
+  // Check if the locations layer already exists
+  if (!map.getLayer("locations")) {
+    map.addLayer({
+      id: "locations",
+      type: "circle",
+      source: "locations",
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": "#9A0619",
+        "circle-radius": 7,
+        "circle-stroke-width": 1,
+        "circle-stroke-color": "#fff",
+      },
+    });
+  }
 }
+
 
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
