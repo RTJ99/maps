@@ -141,6 +141,17 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
+  // Remove layers that use the source
+  if (map.getLayer("clusters")) {
+    map.removeLayer("clusters");
+  }
+  if (map.getLayer("cluster-count")) {
+    map.removeLayer("cluster-count");
+  }
+  if (map.getLayer("locations")) {
+    map.removeLayer("locations");
+  }
+
   // Remove the existing source
   if (map.getSource("locations")) {
     map.removeSource("locations");
@@ -170,11 +181,9 @@ function applyFilters() {
   });
 
   // Reset map layers
-  map.removeLayer("clusters");
-  map.removeLayer("cluster-count");
-  map.removeLayer("locations");
   addMapPoints();
 }
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
