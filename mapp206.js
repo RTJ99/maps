@@ -119,8 +119,6 @@ function applyFilters() {
 
   console.log("Selected Features:", selectedFeatures);
 
-  const selectedCountries = $("#countryDropdown").val();
-
   let featureFilter = ["any"];
   selectedFeatures.forEach(function (feature) {
     if (feature !== "all") {
@@ -128,19 +126,10 @@ function applyFilters() {
     }
   });
 
-  let countryFilter = ["any"];
-  selectedCountries.forEach(function (country) {
-    countryFilter.push(["==", ["get", "country"], country]);
-  });
-
   let combinedFilter = ["all"];
 
   if (featureFilter.length > 1) {
     combinedFilter.push(featureFilter);
-  }
-
-  if (countryFilter.length > 1) {
-    combinedFilter.push(countryFilter);
   }
 
   console.log("Combined Filter:", combinedFilter);
@@ -152,11 +141,15 @@ function applyFilters() {
     // Update the data of the existing source
     let filteredFeatures = mapLocations.features.filter((feature) => {
       let satisfiesFilter = true;
-      if (combinedFilter.length > 1) {
-        satisfiesFilter = map.querySourceFeatures("locations", {
-          filter: combinedFilter,
-          sourceLayer: "locations", // Make sure to use the correct source layer
-        }).includes(feature);
+      try {
+        if (combinedFilter.length > 1) {
+          satisfiesFilter = map.querySourceFeatures("locations", {
+            filter: combinedFilter,
+            sourceLayer: "locations", // Make sure to use the correct source layer
+          }).includes(feature);
+        }
+      } catch (error) {
+        console.error("Error during querySourceFeatures:", error);
       }
       return satisfiesFilter;
     });
