@@ -141,6 +141,8 @@ function applyFilters() {
     combinedFilter.push(countryFilter);
   }
 
+  console.log("Combined Filter:", JSON.stringify(combinedFilter));
+
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
 
@@ -157,6 +159,8 @@ function applyFilters() {
 
     return satisfiesFilter;
   });
+
+  console.log("Filtered Features:", JSON.stringify(filteredFeatures));
 
   // Update the data of the existing source
   map.getSource("locations").setData({
