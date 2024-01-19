@@ -111,13 +111,13 @@ $(function () {
 }*/
 let filteredData = [];
 function applyFilters() {
-  let selectedFeatures = $(".featureCheckbox:checked")
+  const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
       return $(this).val();
     })
     .get();
 
-  let selectedCountries = $("#countryDropdown").val();
+  const selectedCountries = $("#countryDropdown").val();
 
   let featureFilter = ["any"];
   selectedFeatures.forEach(function (feature) {
@@ -133,15 +133,13 @@ function applyFilters() {
 
   let combinedFilter = ["all"];
 
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+  if (featureFilter.length > 1) {
     combinedFilter.push(featureFilter);
   }
 
-  if (selectedCountries && selectedCountries.length > 0) {
+  if (countryFilter.length > 1) {
     combinedFilter.push(countryFilter);
   }
-
-  console.log("Combined Filter:", combinedFilter);
 
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
@@ -158,8 +156,6 @@ function applyFilters() {
     return satisfiesFilter;
   });
 
-  console.log("Filtered Features:", filteredFeatures);
-
   // Update the data of the existing source
   map.getSource("locations").setData({
     type: "FeatureCollection",
@@ -173,7 +169,7 @@ function applyFilters() {
   map.removeSource("locations");
 
   // Add map points with the updated data
-  addMapPoints(filteredData);
+  addMapPoints(filteredFeatures);
 }
 
 
