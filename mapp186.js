@@ -110,7 +110,79 @@ $(function () {
   }
 }*/
 
-style.js:722 Uncaught Error: There is already a source with this ID
+function applyFilters() {
+  let selectedFeatures = $(".featureCheckbox:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
+
+  let selectedCountries = $("#countryDropdown").val();
+
+  let featureFilter = ["any"];
+  selectedFeatures.forEach(function (feature) {
+    if (feature !== "all") {
+      featureFilter.push(["in", feature, ["get", "features"]]);
+    }
+  });
+
+  let countryFilter = ["any"];
+  selectedCountries.forEach(function (country) {
+    countryFilter.push(["==", ["get", "country"], country]);
+  });
+
+  let combinedFilter = ["all"];
+
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    combinedFilter.push(featureFilter);
+  }
+
+  if (selectedCountries && selectedCountries.length > 0) {
+    combinedFilter.push(countryFilter);
+  }
+
+  // Get the current style
+  const style = map.getStyle();
+
+  // Remove layers that use the source
+  style.layers.forEach((layer) => {
+    if (layer.source === "locations") {
+      map.removeLayer(layer.id);
+    }
+  });
+
+  // Remove the existing source
+  if (style.sources && style.sources.locations) {
+    map.removeSource("locations");
+  }
+
+  // Update the map data source with the filtered features
+  let filteredFeatures = mapLocations.features.filter((feature) => {
+    let satisfiesFilter = true;
+    if (combinedFilter.length > 1) {
+      satisfiesFilter = map.querySourceFeatures("locations", {
+        filter: combinedFilter,
+        sourceLayer: "locations", // Make sure to use the correct source layer
+      }).includes(feature);
+    }
+    return satisfiesFilter;
+  });
+
+  map.addSource("locations", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: filteredFeatures,
+    },
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 50,
+  });
+
+  // Reset map layers
+  addMapPoints();
+}
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
