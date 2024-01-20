@@ -143,8 +143,50 @@ function applyFilters() {
 
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
-  map.setFilter("clusters",combinedFilter);
+  map.setFilter("clusters", combinedFilter);
+
+  // Update cluster and point count layer properties based on selected features
+  let clusterPaint = {
+    "circle-color": [
+      "step",
+      ["get", "point_count"],
+      "#9A0619",
+      100,
+      "#9A0619",
+      750,
+      "#9A0619",
+    ],
+    "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+  };
+
+  let pointCountLayout = {
+    "text-field": ["get", "point_count_abbreviated"],
+    "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+    "text-size": 12,
+  };
+
+  if (selectedFeatures.includes("all")) {
+    // Adjust paint properties for clusters when "All" is selected
+    clusterPaint = {
+      "circle-color": "#9A0619",
+      "circle-radius": 40,
+    };
+
+    // Adjust layout properties for point count when "All" is selected
+    pointCountLayout = {
+      "text-field": ["get", "point_count_abbreviated"],
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 16,
+    };
+  }
+
+  map.setPaintProperty("clusters", "circle-color", clusterPaint["circle-color"]);
+  map.setPaintProperty("clusters", "circle-radius", clusterPaint["circle-radius"]);
+  map.setLayoutProperty("cluster-count", "text-field", pointCountLayout["text-field"]);
+  map.setLayoutProperty("cluster-count", "text-font", pointCountLayout["text-font"]);
+  map.setLayoutProperty("cluster-count", "text-size", pointCountLayout["text-size"]);
 }
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
