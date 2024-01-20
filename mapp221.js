@@ -42,7 +42,7 @@ $(function () {
     applyFilters();
   });
 });
-
+console.log("Map Styles:", map.getStyle());
 function applyFilters() {
   let selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
