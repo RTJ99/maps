@@ -20,7 +20,7 @@ $(function () {
       map.getFilter("locations") && map.getFilter("locations").includes(text);
     $(`#${checkboxId}`).prop("checked", isChecked);
   });
-
+console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
   const countryDropdown = $("#countryDropdown");
   uniqueCountries.forEach(function (country) {
     countryDropdown.append(
@@ -467,7 +467,7 @@ function showCollectionItemAndPopup(ID) {
 
   $(".locations-map_item").eq(ID).addClass("is--show");
 }
-console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
+
 function toggleSidebar(id) {
   const elem = document.getElementById(id);
   const collapsed = elem.classList.toggle("collapsed");
