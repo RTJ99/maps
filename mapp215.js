@@ -109,42 +109,32 @@ $(function () {
    
   }
 }*/
+console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
 
 function applyFilters() {
-  let selectedFeatures = $(".featureCheckbox:checked")
-    .map(function () {
-      return $(this).val();
-    })
-    .get();
+  const selectedFeatures = $(".featureCheckbox:checked").map(function () {
+    return $(this).val();
+  }).get();
 
-  let selectedCountries = $("#countryDropdown").val();
-
-  let featureFilter = ["any"];
-  selectedFeatures.forEach(function (feature) {
-    if (feature !== "all") {
-      featureFilter.push(["in", feature, ["get", "features"]]);
-    }
-  });
-
-  let countryFilter = ["any"];
-  selectedCountries.forEach(function (country) {
-    countryFilter.push(["==", ["get", "country"], country]);
-  });
+  const selectedCountries = $("#countryDropdown").val();
 
   let combinedFilter = ["all"];
 
+  // Add feature filter
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    combinedFilter.push(featureFilter);
+    combinedFilter.push(["in", "features", ["get", "features"]]);
   }
 
+  // Add country filter
   if (selectedCountries && selectedCountries.length > 0) {
-    combinedFilter.push(countryFilter);
+    combinedFilter.push(["in", "country", ["get", "country"]]);
   }
 
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
-  map.setFilter("clusters",combinedFilter);
+  map.setFilter("clusters", combinedFilter);
 }
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
