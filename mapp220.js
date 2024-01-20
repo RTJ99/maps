@@ -1,6 +1,6 @@
 $(function () {
   // something
-  $("#countryDropdown").select2({
+   $("#countryDropdown").select2({
     placeholder: "Choose Countries",
     allowClear: true,
   });
@@ -11,10 +11,10 @@ $(function () {
     const checkboxId = `featureCheckbox${index + 1}`;
 
     checkboxContainer.append(`
-<label>
-    <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
-</label>
-`);
+      <label>
+          <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
+      </label>
+    `);
 
     const isChecked =
       map.getFilter("locations") && map.getFilter("locations").includes(text);
@@ -42,73 +42,6 @@ $(function () {
     applyFilters();
   });
 });
-
-/*function applyFilters() {
-  let filterCondition = ["any"]; // Initial filter condition
-  const selectedFeatures = $(".featureCheckbox:checked")
-    .map(function () {
-      console.log($(this).val(),"selected feature/*******************");
-      return $(this).val();
-    })
-    .get();
-    
-  console.log(selectedFeatures,"selected features ******************");
-  const selectedCountries = $("#countryDropdown").val();
-
- if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    console.log("we are here");
-    let featuresFilter = ["any"]; // Initialize featuresFilter
-    selectedFeatures.forEach(function (selectedFeature) {
-      featuresFilter.push(["in", selectedFeature, ["get", "features", ["properties"]]]);    
-    });
-    console.log(selectedFeatures,"selected features++++++++");
-    
-   filterCondition = featuresFilter;
-   console.log(filterCondition,"filter condition-------");
-  }
-  
-
-  if (selectedCountries && selectedCountries.length > 0) {
-    const countriesFilter = ["any"];
-    console.log("in countries filter");
-    selectedCountries.forEach(function (selectedCountry) {
-      countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
-    });
-   
-    filterCondition.push(countriesFilter);
-  }
-
-  // If "All" is selected, show all clusters and unclustered points
-  if (selectedFeatures.includes("all")) {
-    // Show all clusters
-    console.log("********** includes all ******** ");
-    map.setFilter("clusters", ["has", "point_count"]);
-
-    // Show unclustered points
-    map.setFilter("locations", ["!has", "point_count"]);
-
-  } else {
-    console.log("********** filtered ******** ");
-    // Show clusters and unclustered points that match the selected features
-    //map.setFilter("clusters", ["==", "point_count", 0], filterCondition);
-    // Combine the "point_count" filter with your custom filterCondition
-   let combinedFilter = [
-       "all",
-        ["has", ["get", "point_count"]],
-        ["any", ["in", "Renewable Energy", ["get", "features"]]]
-    
-   ];
-
-   // Apply the combined filter to the "clusters" layer
-   map.setFilter("clusters", combinedFilter);   
-   console.log(combinedFilter,"###### filterCondition ####");
-
-    //map.setFilter("locations",combinedFilter);
-
-   
-   
-  }
-}*/
 
 function applyFilters() {
   let selectedFeatures = $(".featureCheckbox:checked")
@@ -148,40 +81,41 @@ function applyFilters() {
   // Update cluster and point count layer properties based on selected features
   let clusterPaint = {
     "circle-color": [
-      "step",
-      ["get", "point_count"],
-      "#9A0619",
-      100,
-      "#9A0619",
-      750,
-      "#9A0619",
+      "match",
+      ["get", "ETAT"],
+      "Concédée", "#fc5d00",
+      "Supprimée", "#f60700",
+      "Annulée", "#dbdbdc",
+      "Vacante", "#27a658",
+      "Etat inconnu", "#7b7b7b",
+      "#7b7b7b" /* Default color if no match is found */
     ],
-    "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+    "circle-opacity": 0.8
   };
 
   let pointCountLayout = {
     "text-field": ["get", "point_count_abbreviated"],
     "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-    "text-size": 12,
+    "text-size": 12
   };
 
   if (selectedFeatures.includes("all")) {
     // Adjust paint properties for clusters when "All" is selected
     clusterPaint = {
-      "circle-color": "#9A0619",
-      "circle-radius": 40,
+      "circle-color": "#11b4da",
+      "circle-opacity": 0.8
     };
 
     // Adjust layout properties for point count when "All" is selected
     pointCountLayout = {
       "text-field": ["get", "point_count_abbreviated"],
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-      "text-size": 16,
+      "text-size": 12
     };
   }
 
-  map.setPaintProperty("clusters", "circle-color", clusterPaint["circle-color"]);
-  map.setPaintProperty("clusters", "circle-radius", clusterPaint["circle-radius"]);
+  map.setPaintProperty("concessions", "fill-color", clusterPaint["circle-color"]);
+  map.setPaintProperty("concessions", "fill-opacity", clusterPaint["circle-opacity"]);
   map.setLayoutProperty("cluster-count", "text-field", pointCountLayout["text-field"]);
   map.setLayoutProperty("cluster-count", "text-font", pointCountLayout["text-font"]);
   map.setLayoutProperty("cluster-count", "text-size", pointCountLayout["text-size"]);
