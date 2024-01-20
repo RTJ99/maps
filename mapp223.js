@@ -415,6 +415,7 @@ map.on("load", function (e) {
 
   mapLocations.features.push(defaultFeature);
   console.log("Default List of Locations:", mapLocations.features);
+  console.log("Map Styles:", map.getStyle());
   addMapPoints();
 });
 let defaultMapLocations = mapLocations.features;
@@ -509,7 +510,7 @@ function clearFilters() {
   // Reset the map using applyFilters
   applyFilters();
 }
-console.log("Map Styles:", map.getStyle());
+
 
 function filterMapFeatures(selectedFeatureText) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
