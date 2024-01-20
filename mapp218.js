@@ -20,7 +20,7 @@ $(function () {
       map.getFilter("locations") && map.getFilter("locations").includes(text);
     $(`#${checkboxId}`).prop("checked", isChecked);
   });
-console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
+
   const countryDropdown = $("#countryDropdown");
   uniqueCountries.forEach(function (country) {
     countryDropdown.append(
@@ -110,31 +110,41 @@ console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
   }
 }*/
 
-
 function applyFilters() {
-  const selectedFeatures = $(".featureCheckbox:checked").map(function () {
-    return $(this).val();
-  }).get();
+  let selectedFeatures = $(".featureCheckbox:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
 
-  const selectedCountries = $("#countryDropdown").val();
+  let selectedCountries = $("#countryDropdown").val();
+
+  let featureFilter = ["any"];
+  selectedFeatures.forEach(function (feature) {
+    if (feature !== "all") {
+      featureFilter.push(["in", feature, ["get", "features"]]);
+    }
+  });
+
+  let countryFilter = ["any"];
+  selectedCountries.forEach(function (country) {
+    countryFilter.push(["==", ["get", "country"], country]);
+  });
 
   let combinedFilter = ["all"];
 
-  // Add feature filter
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    combinedFilter.push(["in", "features", ["get", "features"]]);
+    combinedFilter.push(featureFilter);
   }
 
-  // Add country filter
   if (selectedCountries && selectedCountries.length > 0) {
-    combinedFilter.push(["in", "country", ["get", "country"]]);
+    combinedFilter.push(countryFilter);
   }
 
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
-  map.setFilter("clusters", combinedFilter);
+  map.setFilter("clusters",combinedFilter);
 }
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -467,7 +477,6 @@ function showCollectionItemAndPopup(ID) {
 
   $(".locations-map_item").eq(ID).addClass("is--show");
 }
-
 function toggleSidebar(id) {
   const elem = document.getElementById(id);
   const collapsed = elem.classList.toggle("collapsed");
