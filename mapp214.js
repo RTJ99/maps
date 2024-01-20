@@ -143,6 +143,7 @@ function applyFilters() {
 
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
+  map.setFilter("clusters",combinedFilter);
 }
 
 $(".locations-map_wrapper").removeClass("is--show");
