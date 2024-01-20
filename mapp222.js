@@ -42,7 +42,7 @@ $(function () {
     applyFilters();
   });
 });
-console.log("Map Styles:", map.getStyle());
+
 function applyFilters() {
   let selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
@@ -509,6 +509,7 @@ function clearFilters() {
   // Reset the map using applyFilters
   applyFilters();
 }
+console.log("Map Styles:", map.getStyle());
 
 function filterMapFeatures(selectedFeatureText) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
