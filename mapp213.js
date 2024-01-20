@@ -131,39 +131,19 @@ function applyFilters() {
     countryFilter.push(["==", ["get", "country"], country]);
   });
 
-  let clusterFilter = ["all"];
-  let unclusteredFilter = ["all"];
+  let combinedFilter = ["all"];
 
   if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    clusterFilter.push(["has", "point_count"]);
-    unclusteredFilter.push(["!has", "point_count"]);
-    clusterFilter.push(featureFilter);
-    unclusteredFilter.push(featureFilter);
-  } else {
-    clusterFilter.push(["!has", "point_count"]);
-    unclusteredFilter.push(["has", "point_count"]);
+    combinedFilter.push(featureFilter);
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
-    clusterFilter.push(countryFilter);
-    unclusteredFilter.push(countryFilter);
+    combinedFilter.push(countryFilter);
   }
 
-  // Log point count for clusters
-  console.log("Cluster Filter:", clusterFilter);
-  const clusterFeatures = map.queryRenderedFeatures({ layers: ["clusters"] });
-  console.log("Cluster Point Count:", clusterFeatures.length);
-
-  // Log point count for unclustered points
-  console.log("Unclustered Filter:", unclusteredFilter);
-  const unclusteredFeatures = map.queryRenderedFeatures({ layers: ["locations"] });
-  console.log("Unclustered Point Count:", unclusteredFeatures.length);
-
-  // Apply the filters to clusters and unclustered points separately
-  map.setFilter("clusters", clusterFilter);
-  map.setFilter("locations", unclusteredFilter);
+  // Apply the combined filter to both clusters and locations
+  map.setFilter("locations", combinedFilter);
 }
-
 
 $(".locations-map_wrapper").removeClass("is--show");
 
