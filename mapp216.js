@@ -109,7 +109,7 @@ $(function () {
    
   }
 }*/
-console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
+
 
 function applyFilters() {
   const selectedFeatures = $(".featureCheckbox:checked").map(function () {
@@ -467,6 +467,7 @@ function showCollectionItemAndPopup(ID) {
 
   $(".locations-map_item").eq(ID).addClass("is--show");
 }
+console.log(uniqueFeatureTexts, "uniqueFeatureTexts");
 function toggleSidebar(id) {
   const elem = document.getElementById(id);
   const collapsed = elem.classList.toggle("collapsed");
