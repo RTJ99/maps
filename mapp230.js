@@ -288,7 +288,7 @@ function searchByName() {
 
     toggleSidebar("left");
     showCollectionItemAndPopup(ID);
-console.log(filteredFeatures,"filtered features);
+console.log(filteredFeatures,"filtered features");
     // Update the map data source with the filtered features
     map.getSource("locations").setData({
       type: "FeatureCollection",
