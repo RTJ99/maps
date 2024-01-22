@@ -80,16 +80,7 @@ function applyFilters() {
 
   // Update cluster and point count layer properties based on selected features
   let clusterPaint = {
-    "circle-color": [
-      "match",
-      ["get", "features"],
-      "Concédée", "#fc5d00",
-      "Supprimée", "#f60700",
-      "Annulée", "#dbdbdc",
-      "Vacante", "#27a658",
-      "Etat inconnu", "#7b7b7b",
-      "#7b7b7b" /* Default color if no match is found */
-    ],
+    "circle-color": "#11b4da",
     "circle-opacity": 0.8,
   };
 
