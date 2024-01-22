@@ -82,7 +82,7 @@ function applyFilters() {
   let clusterPaint = {
     "circle-color": [
       "match",
-      ["get", "ETAT"],
+      ["get", "features"],
       "Concédée", "#fc5d00",
       "Supprimée", "#f60700",
       "Annulée", "#dbdbdc",
@@ -90,27 +90,27 @@ function applyFilters() {
       "Etat inconnu", "#7b7b7b",
       "#7b7b7b" /* Default color if no match is found */
     ],
-    "circle-opacity": 0.8
+    "circle-opacity": 0.8,
   };
 
   let pointCountLayout = {
     "text-field": ["get", "point_count_abbreviated"],
     "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-    "text-size": 12
+    "text-size": 12,
   };
 
   if (selectedFeatures.includes("all")) {
     // Adjust paint properties for clusters when "All" is selected
     clusterPaint = {
       "circle-color": "#11b4da",
-      "circle-opacity": 0.8
+      "circle-opacity": 0.8,
     };
 
     // Adjust layout properties for point count when "All" is selected
     pointCountLayout = {
       "text-field": ["get", "point_count_abbreviated"],
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-      "text-size": 12
+      "text-size": 12,
     };
   }
 
@@ -120,6 +120,57 @@ function applyFilters() {
   map.setLayoutProperty("cluster-count", "text-font", pointCountLayout["text-font"]);
   map.setLayoutProperty("cluster-count", "text-size", pointCountLayout["text-size"]);
 }
+
+function filterMapFeatures(selectedFeatureText) {
+  const filteredFeatures = mapLocations.features.filter((feature) =>
+    feature.properties.features.includes(selectedFeatureText)
+  );
+
+  let selectedFeatures = $(".featureCheckbox:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
+
+  let selectedCountries = $("#countryDropdown").val();
+
+  let featureFilter = ["any"];
+  selectedFeatures.forEach(function (feature) {
+    if (feature !== "all") {
+      featureFilter.push(["in", feature, ["get", "features"]]);
+    }
+  });
+
+  let countryFilter = ["any"];
+  selectedCountries.forEach(function (country) {
+    countryFilter.push(["==", ["get", "country"], country]);
+  });
+
+  let combinedFilter = ["all"];
+
+  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
+    combinedFilter.push(featureFilter);
+  }
+
+  if (selectedCountries && selectedCountries.length > 0) {
+    combinedFilter.push(countryFilter);
+  }
+
+  // Apply the combined filter to both clusters and locations
+  map.setFilter("locations", combinedFilter);
+  map.setFilter("clusters", combinedFilter);
+
+  if (filteredFeatures.length > 0) {
+    const ID = filteredFeatures[0].properties.arrayID;
+
+    toggleSidebar("left");
+
+    showCollectionItemAndPopup(ID);
+  } else {
+    toggleSidebar("left");
+  }
+}
+
 
 
 $(".locations-map_wrapper").removeClass("is--show");
