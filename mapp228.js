@@ -106,7 +106,7 @@ function applyFilters() {
   }
 
 map.setPaintProperty("locations", "circle-color", '#11b4da');
-map.setPaintProperty("locations", "fill-opacity", clusterPaint["circle-opacity"]);
+map.setPaintProperty("locations", "circle-opacity", 0.8);
   map.setLayoutProperty("cluster-count", "text-field", pointCountLayout["text-field"]);
   map.setLayoutProperty("cluster-count", "text-font", pointCountLayout["text-font"]);
   map.setLayoutProperty("cluster-count", "text-size", pointCountLayout["text-size"]);
