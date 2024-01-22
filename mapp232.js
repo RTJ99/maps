@@ -73,8 +73,16 @@ function applyFilters() {
   if (selectedCountries && selectedCountries.length > 0) {
     combinedFilter.push(countryFilter);
   }
-
+console.log(combinedFilter,"combinedFilter checkboxes")
   // Apply the combined filter to both clusters and locations
+   map.getSource("locations").setData({
+      type: "FeatureCollection",
+      features: filteredFeatures,
+    });
+   map.getSource("clusters").setData({
+      type: "FeatureCollection",
+      features: filteredFeatures,
+    });
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
 
