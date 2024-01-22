@@ -150,6 +150,7 @@ function filterMapFeatures(selectedFeatureText) {
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
+  console.log(combinedFilter,"combinedFilter");
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
