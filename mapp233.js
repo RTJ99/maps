@@ -77,14 +77,14 @@ console.log(combinedFilter,"combinedFilter checkboxes")
   // Apply the combined filter to both clusters and locations
    map.getSource("locations").setData({
       type: "FeatureCollection",
-      features: filteredFeatures,
+      features: selectedFeatures,
     });
    map.getSource("clusters").setData({
       type: "FeatureCollection",
-      features: filteredFeatures,
+      features: selectedFeatures,
     });
-  map.setFilter("locations", combinedFilter);
-  map.setFilter("clusters", combinedFilter);
+  // map.setFilter("locations", combinedFilter);
+  // map.setFilter("clusters", combinedFilter);
 
   // Update cluster and point count layer properties based on selected features
   let clusterPaint = {
