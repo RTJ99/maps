@@ -79,10 +79,10 @@ console.log(combinedFilter,"combinedFilter checkboxes")
       type: "FeatureCollection",
       features: selectedFeatures,
     });
-   map.getSource("clusters").setData({
-      type: "FeatureCollection",
-      features: selectedFeatures,
-    });
+   // map.getSource("clusters").setData({
+   //    type: "FeatureCollection",
+   //    features: selectedFeatures,
+   //  });
   // map.setFilter("locations", combinedFilter);
   // map.setFilter("clusters", combinedFilter);
 
