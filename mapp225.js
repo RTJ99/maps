@@ -114,8 +114,8 @@ function applyFilters() {
     };
   }
 
-  map.setPaintProperty("concessions", "fill-color", clusterPaint["circle-color"]);
-  map.setPaintProperty("concessions", "fill-opacity", clusterPaint["circle-opacity"]);
+map.setPaintProperty("locations", "fill-color", clusterPaint["circle-color"]);
+map.setPaintProperty("locations", "fill-opacity", clusterPaint["circle-opacity"]);
   map.setLayoutProperty("cluster-count", "text-field", pointCountLayout["text-field"]);
   map.setLayoutProperty("cluster-count", "text-font", pointCountLayout["text-font"]);
   map.setLayoutProperty("cluster-count", "text-size", pointCountLayout["text-size"]);
