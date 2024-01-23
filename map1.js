@@ -32,6 +32,10 @@ $(function () {
     );
   });
 
+  $("#countryDropdown").on("change", function () {
+    applyFilters();
+  });
+
   checkboxContainer.on("change", ".featureCheckbox", function () {
     if ($(this).val() === "all") {
       // Uncheck other checkboxes when "All" is checked
