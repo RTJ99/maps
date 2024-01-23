@@ -5,7 +5,7 @@ $(function () {
     allowClear: true,
   });
 
-  const checkboxContainer = $("#checkboxContainer");
+  const checkboxContainer = $(".checkbox-container");
 
   uniqueFeatureTexts.forEach(function (text, index) {
     const checkboxId = `featureCheckbox${index + 1}`;
