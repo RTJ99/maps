@@ -18,7 +18,7 @@ $(function () {
     `);
 
     const isChecked =
-      map.getFilter("locations") && map.getFilter("locations").includes(text);
+      map.getFilter("unclustered-point") && map.getFilter("unclustered-point").includes(text);
     $(`#${checkboxId}`).prop("checked", isChecked);
   });
 
@@ -57,20 +57,21 @@ function applyFilters() {
 
   const selectedCountries = $("#countryDropdown").val();
 
-  let filterCondition = ["any"];
+  let filterCondition = ['all', ['!', ['has', 'point_count']]];
 
-  if (selectedFeatures.length > 0 && !selectedFeatures.includes("all")) {
-    const featuresFilter = ["any"];
-    selectedFeatures.forEach(function (selectedFeature) {
-      featuresFilter.push(["in", selectedFeature, ["get", "features"]]);
-    });
-    filterCondition.push(featuresFilter);
+  const activeFilters = ['any'];
+  $(".featureCheckbox:checked").each(function () {
+    activeFilters.push(['in', $(this).val(), ['get', 'features']]);
+  });
+
+  if (activeFilters.length > 1) {
+    filterCondition.push(activeFilters);
   }
 
   if (selectedCountries && selectedCountries.length > 0) {
-    const countriesFilter = ["any"];
+    const countriesFilter = ['any'];
     selectedCountries.forEach(function (selectedCountry) {
-      countriesFilter.push(["in", selectedCountry, ["get", "country"]]);
+      countriesFilter.push(['in', selectedCountry, ['get', 'country']]);
     });
     filterCondition.push(countriesFilter);
   }
@@ -81,17 +82,47 @@ function applyFilters() {
       /[aeiou]/i.test(feature.properties.description)
     );
     console.log("Points with Vowels:", vowelPoints);
-    map.setFilter("locations", [
-      "in",
-      "id",
+    map.setFilter('unclustered-point', [
+      'in',
+      'id',
+      ...vowelPoints.map((point) => point.properties.id),
+    ]);
+    map.setFilter('clusters', [
+      'in',
+      'id',
       ...vowelPoints.map((point) => point.properties.id),
     ]);
   } else {
     // Show locations based on selected filters
-    map.setFilter("locations", filterCondition);
-    map.setFilter("clusters", filterCondition); // Update cluster filter
+    map.setFilter('unclustered-point', filterCondition);
+    map.setFilter('clusters', filterCondition);
+
+    // Log filter conditions for unclustered points
+    console.log("*********** filterConditions ********* ", filterCondition);
+
+    // Update unclustered points
+    map.setFilter('unclustered-point', filterCondition);
+
+    // Create a filtered FeatureCollection for unclustered points
+    const filteredData = {
+      type: "FeatureCollection",
+      crs: mapLocations.crs,
+      features: mapLocations.features.filter((feature) => {
+        return selectedFeatures.some((checkboxValue) =>
+          feature.properties.features && feature.properties.features.includes(checkboxValue)
+        );
+      }),
+    };
+
+    console.log(filteredData, "filteredData");
+
+    // Update the data for unclustered points
+    if (map.getSource('locations')) {
+      map.getSource('locations').setData(filteredData);
+    }
   }
 }
+
 function filterMapFeatures(selectedFeatureText) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.features.includes(selectedFeatureText)
@@ -128,7 +159,7 @@ function filterMapFeatures(selectedFeatureText) {
   }
 
   // Apply the combined filter to both clusters and locations
-  map.setFilter("locations", combinedFilter);
+  map.setFilter("unclustered-point", combinedFilter);
   map.setFilter("clusters", combinedFilter);
   console.log(combinedFilter,"combinedFilter");
 
@@ -330,7 +361,7 @@ function addMapPoints() {
   });
 
   map.addLayer({
-    id: "locations",
+    id: "unclustered-point",
     type: "circle",
     source: "locations",
     filter: ["!", ["has", "point_count"]],
@@ -354,7 +385,7 @@ function addPopup(e) {
   new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
 }
 
-map.on("click", "locations", (e) => {
+map.on("click", "unclustered-point", (e) => {
   
   const feature = e.features[0];
  
@@ -371,7 +402,7 @@ map.on("click", "locations", (e) => {
   addPopup(e);
 });
 
-map.on("mouseenter", "locations", (e) => {
+map.on("mouseenter", "unclustered-point", (e) => {
   map.getCanvas().style.cursor = "pointer";
 
   const coordinates = e.features[0].geometry.coordinates.slice();
@@ -384,7 +415,7 @@ map.on("mouseenter", "locations", (e) => {
   popup.setLngLat(coordinates).setHTML(description).addTo(map);
 });
 
-map.on("mouseleave", "locations", () => {
+map.on("mouseleave", "unclustered-point", () => {
   map.getCanvas().style.cursor = "";
   popup.remove();
 });
@@ -421,7 +452,7 @@ const popup = new mapboxgl.Popup({
   closeOnClick: false,
 });
 
-map.on("mouseenter", "locations", (e) => {
+map.on("mouseenter", "unclustered-point", (e) => {
   map.getCanvas().style.cursor = "pointer";
 
   const coordinates = e.features[0].geometry.coordinates.slice();
@@ -434,7 +465,7 @@ map.on("mouseenter", "locations", (e) => {
   popup.setLngLat(coordinates).setHTML(description).addTo(map);
 });
 
-map.on("mouseleave", "locations", () => {
+map.on("mouseleave", "unclustered-point", () => {
   map.getCanvas().style.cursor = "";
   popup.remove();
 });
@@ -510,7 +541,7 @@ function filterMapFeatures(selectedFeatureText) {
     feature.properties.features.includes(selectedFeatureText)
   );
 
-  map.setFilter("locations", ["in", selectedFeatureText, ["get", "features"]]);
+  map.setFilter("unclustered-point", ["in", selectedFeatureText, ["get", "features"]]);
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
