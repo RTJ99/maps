@@ -96,7 +96,7 @@ function applyFilters() {
     // Show locations based on selected filters
     map.setFilter('unclustered-point', filterCondition);
     map.setFilter('clusters', filterCondition);
-
+console.log("Unclustered Points:", mapLocations.features.filter(feature => map.getFilter('unclustered-point')(feature)));
     // Log filter conditions for unclustered points
     console.log("*********** filterConditions ********* ", filterCondition);
 
@@ -335,7 +335,7 @@ function addMapPoints() {
     source: "locations",
     filter: ["has", "point_count"],
     paint: {
-      "circle-color": "#51bbd6",
+      "circle-color": "#9A0619",
       "circle-radius": [
         "step",
         ["get", "point_count"],
@@ -469,6 +469,29 @@ map.on("mouseleave", "unclustered-point", () => {
   map.getCanvas().style.cursor = "";
   popup.remove();
 });
+map.on("click", "clusters", function (e) {
+  const features = map.queryRenderedFeatures(e.point, { layers: ["clusters"] });
+  const clusterId = features[0].properties.cluster_id;
+
+  // Get the cluster's center coordinates
+  const clusterCenter = features[0].geometry.coordinates;
+
+  // Increase the zoom level to zoom in
+  const zoomLevel = map.getZoom() + 1;
+
+  // Perform the zoom operation centered on the clicked cluster
+  map.easeTo({
+    center: clusterCenter,
+    zoom: zoomLevel,
+    duration: 500,  // You can adjust the duration as needed
+  });
+
+  // You can add more logic here if needed
+
+  // Prevent the default map click behavior
+  e.preventDefault();
+});
+
 function showCollectionItemAndPopup(ID) {
   $(".locations-map_wrapper").addClass("is--show");
 
