@@ -355,23 +355,7 @@ map.on("mouseleave", "locations", () => {
 
 
 map.on("load", function (e) {
-  const defaultFeature = {
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: ["34.3015", "13.2543"],
-    },
-    properties: {
-      id: "william-kamkwamba",
-      description: "description",
-      arrayID: 0,
-      features: ["Renewable Energy"],
-    },
-  };
 
-  mapLocations.features.push(defaultFeature);
-  console.log("Default List of Locations:", mapLocations.features);
-  console.log("Map Styles:", map.getStyle());
   addMapPoints();
 });
 let defaultMapLocations = mapLocations.features;
