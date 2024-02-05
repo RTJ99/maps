@@ -256,10 +256,18 @@ function closeSidebar() {
 
 getGeoData();
 function searchByName() {
-  const searchInput = document
-    .getElementById("searchByName")
-    .value.toLowerCase();
+  // Get the search input value and convert it to lowercase
+  const searchInput = document.getElementById("searchByName").value.toLowerCase();
 
+  // Check if the search input is empty
+  if (searchInput.trim() === "") {
+    // If it's empty, you can choose to do nothing or show a message
+    // For example, you can alert the user or log a message to the console
+    alert("Please enter a search term.");
+    return; // Exit the function without further execution
+  }
+
+  // Filter the features based on the search input
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.description.toLowerCase().includes(searchInput)
   );
@@ -267,22 +275,21 @@ function searchByName() {
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
 
+    // Show the sidebar and collection item
     toggleSidebar("left");
     showCollectionItemAndPopup(ID);
-console.log(filteredFeatures,"filtered features");
+
     // Update the map data source with the filtered features
     map.getSource("locations").setData({
       type: "FeatureCollection",
       features: filteredFeatures,
     });
   } else {
+    // If no matching locations found, show an alert and reset the map to default locations
     alert("No matching locations found.");
-
-    // Reset the map to the default locations if no match is found
     map.getSource("locations").setData(mapLocations);
   }
 }
-
 function addMapPoints() {
   map.addSource("locations", {
     type: "geojson",
