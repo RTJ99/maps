@@ -78,6 +78,7 @@ function applyFilters() {
   map.setFilter("clusters", combinedFilter);
 }
 
+
 function filterMapFeatures(selectedFeatureText) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.features.includes(selectedFeatureText)
