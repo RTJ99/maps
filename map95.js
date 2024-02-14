@@ -2,7 +2,7 @@
 $(function () {
   // something
    $("#countryDropdown").select2({
-    placeholder: "Choose Countries",
+    placeholder: "Choose Locations",
     allowClear: true,
   });
 
