@@ -345,7 +345,7 @@ map.on("click", "locations", (e) => {
 
   $(".locations-map_item").eq(ID).addClass("is--show");
   addPopup(e);
-  e.stopPropagation();
+
 });
 
 map.on("mouseenter", "locations", (e) => {
