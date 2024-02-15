@@ -303,13 +303,7 @@ function addMapPoints() {
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
-  
- const existingPopups = map.popups.filter(popup => {
-    const popupCoordinates = popup.getLngLat().toArray();
-   console.log(popupCoordinates,"coords");
-    return popupCoordinates[0] === coordinates[0] && popupCoordinates[1] === coordinates[1];
-  });
-  console.log(existingPopups,"existing");
+console.log(e.features[0],"e.featurds")
   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
   }
