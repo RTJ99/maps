@@ -304,16 +304,27 @@ function addMapPoints() {
   });
 }
 
+let currentPopup;
+
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
-console.log(e.features[0],"e.featurds")
- 
-  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-  }
 
-  new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+  if (!currentPopup || currentPopup.getDescription() !== description) {
+    // Close the existing popup if it's open
+    if (currentPopup) {
+      currentPopup.remove();
+    }
+
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    currentPopup = new mapboxgl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(description)
+      .addTo(map);
+  }
 }
 
 map.on("click", "locations", (e) => {
