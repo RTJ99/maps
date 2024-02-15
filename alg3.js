@@ -300,30 +300,22 @@ function addMapPoints() {
   });
 }
 
-let currentPopup;
-
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
-
-  // Check if there's already a popup at the same coordinates
-  const existingPopup = map.popups.find(popup => {
+  
+ const existingPopups = map.popups.filter(popup => {
     const popupCoordinates = popup.getLngLat().toArray();
+   console.log(popupCoordinates,"coords");
     return popupCoordinates[0] === coordinates[0] && popupCoordinates[1] === coordinates[1];
   });
-
-  if (existingPopup) {
-    // If there's already a popup at these coordinates, remove it
-    existingPopup.remove();
+  console.log(existingPopups,"existing");
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
   }
 
-  // Create new popup
-  currentPopup = new mapboxgl.Popup()
-    .setLngLat(coordinates)
-    .setHTML(description)
-    .addTo(map);
+  new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
 }
-
 
 map.on("click", "locations", (e) => {
   
