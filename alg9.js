@@ -78,18 +78,9 @@ function applyFilters() {
   map.setFilter("clusters", combinedFilter);
 }
 
-function countAndLogPoints() {
-  const totalPoints = mapLocations.features.length;
-  console.log("Total points on the map:", totalPoints);
-}
 
-function logAllPoints() {
-  mapLocations.features.forEach((feature, index) => {
-    console.log(`Point ${index + 1}:`, feature);
-  });
-}
 
-// Call this function wherever you need to log all the points, for example:
+
 
 function filterMapFeatures(selectedFeatureText) {
  
@@ -317,8 +308,7 @@ function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
 console.log(e.features[0],"e.featurds")
-   logAllPoints();
-  countAndLogPoints();
+ 
   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
   }
@@ -431,7 +421,16 @@ function resetMap() {
   // Manually trigger applyFilters to simulate all filters selected
   applyFilters();
 }
+function countAndLogPoints() {
+  const totalPoints = mapLocations.features.length;
+  console.log("Total points on the map:", totalPoints);
+}
 
+function logAllPoints() {
+  mapLocations.features.forEach((feature, index) => {
+    console.log(`Point ${index + 1}:`, feature);
+  });
+}
 function clearFilters() {
   // Reset checkboxes
   const checkboxes = document.querySelectorAll(".featureCheckbox:checked");
@@ -458,6 +457,8 @@ function clearFilters() {
 
   // Reset the map using applyFilters
   applyFilters();
+  countAndLogPoints();
+  logAllPoints();
 }
 
 
