@@ -78,7 +78,19 @@ function applyFilters() {
   map.setFilter("clusters", combinedFilter);
 }
 
+function countAndLogPoints() {
+  const totalPoints = mapLocations.features.length;
+  console.log("Total points on the map:", totalPoints);
+}
+countAndLogPoints();
+function logAllPoints() {
+  mapLocations.features.forEach((feature, index) => {
+    console.log(`Point ${index + 1}:`, feature);
+  });
+}
 
+// Call this function wherever you need to log all the points, for example:
+logAllPoints();
 function filterMapFeatures(selectedFeatureText) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.features.includes(selectedFeatureText)
