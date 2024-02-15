@@ -82,7 +82,7 @@ function countAndLogPoints() {
   const totalPoints = mapLocations.features.length;
   console.log("Total points on the map:", totalPoints);
 }
-countAndLogPoints();
+
 function logAllPoints() {
   mapLocations.features.forEach((feature, index) => {
     console.log(`Point ${index + 1}:`, feature);
@@ -90,8 +90,9 @@ function logAllPoints() {
 }
 
 // Call this function wherever you need to log all the points, for example:
-logAllPoints();
+
 function filterMapFeatures(selectedFeatureText) {
+ 
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.features.includes(selectedFeatureText)
   );
@@ -316,6 +317,8 @@ function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
 console.log(e.features[0],"e.featurds")
+   logAllPoints();
+  countAndLogPoints();
   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
   }
