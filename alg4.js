@@ -300,44 +300,47 @@ function addMapPoints() {
   });
 }
 
+let currentPopup;
+
 function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
 
-  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  // Check if there's already a popup at the same coordinates
+  const existingPopup = map.popups.find(popup => {
+    const popupCoordinates = popup.getLngLat().toArray();
+    return popupCoordinates[0] === coordinates[0] && popupCoordinates[1] === coordinates[1];
+  });
+
+  if (existingPopup) {
+    // If there's already a popup at these coordinates, remove it
+    existingPopup.remove();
   }
-
-  new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
-}
-
-let currentPopup;
-
-map.on("click", "locations", (e) => {
-  const feature = e.features[0];
-  const ID = feature.properties.arrayID;
-
-  // Close current popup if it exists
-  if (currentPopup) {
-    currentPopup.remove();
-  }
-
-  const coordinates = feature.geometry.coordinates.slice();
-  const description = feature.properties.description;
 
   // Create new popup
   currentPopup = new mapboxgl.Popup()
     .setLngLat(coordinates)
     .setHTML(description)
     .addTo(map);
+}
 
-  // Show/hide sidebar
-  toggleSidebar("left");
 
-  // Show collection item
-  showCollectionItemAndPopup(ID);
+map.on("click", "locations", (e) => {
+  
+  const feature = e.features[0];
+ 
+  const ID = feature.properties.arrayID;
+ 
+  addPopup(e);
+  $(".locations-map_wrapper").addClass("is--show");
+
+  if ($(".locations-map_item.is--show").length) {
+    $(".locations-map_item").removeClass("is--show");
+  }
+
+  $(".locations-map_item").eq(ID).addClass("is--show");
+  addPopup(e);
 });
-
 
 map.on("mouseenter", "locations", (e) => {
   map.getCanvas().style.cursor = "pointer";
