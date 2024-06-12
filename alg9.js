@@ -1,7 +1,6 @@
-
 $(function () {
-  // something
-   $("#countryDropdown").select2({
+  // Initialize Select2 for the country dropdown
+  $("#countryDropdown").select2({
     placeholder: "Choose Locations",
     allowClear: true,
   });
@@ -10,26 +9,18 @@ $(function () {
 
   uniqueFeatureTexts.forEach(function (text, index) {
     const checkboxId = `featureCheckbox${index + 1}`;
-
     checkboxContainer.append(`
       <label>
-          <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
+        <input type="checkbox" id="${checkboxId}" class="featureCheckbox" value="${text}"> ${text}
       </label>
     `);
-
-    const isChecked =
-      map.getFilter("locations") && map.getFilter("locations").includes(text);
+    const isChecked = map.getFilter("locations") && map.getFilter("locations").includes(text);
     $(`#${checkboxId}`).prop("checked", isChecked);
   });
 
   const countryDropdown = $("#countryDropdown");
   uniqueCountries.forEach(function (country) {
-    countryDropdown.append(
-      $("<option>", {
-        value: country,
-        text: country,
-      })
-    );
+    countryDropdown.append($("<option>", { value: country, text: country }));
   });
 
   $("#countryDropdown").on("change", function () {
@@ -38,10 +29,8 @@ $(function () {
 
   checkboxContainer.on("change", ".featureCheckbox", function () {
     if ($(this).val() === "all") {
-      // Uncheck other checkboxes when "All" is checked
       $(".featureCheckbox").not(this).prop("checked", false);
     } else {
-      // Uncheck the "All" checkbox when other checkboxes are checked
       $("#allCheckbox").prop("checked", false);
     }
     applyFilters();
@@ -73,26 +62,18 @@ function applyFilters() {
     combinedFilter.push(countriesFilter);
   }
 
-  // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
 }
 
-
-
-
-
 function filterMapFeatures(selectedFeatureText) {
- 
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.features.includes(selectedFeatureText)
   );
 
-  let selectedFeatures = $(".featureCheckbox:checked")
-    .map(function () {
-      return $(this).val();
-    })
-    .get();
+  let selectedFeatures = $(".featureCheckbox:checked").map(function () {
+    return $(this).val();
+  }).get();
 
   let selectedCountries = $("#countryDropdown").val();
 
@@ -118,28 +99,22 @@ function filterMapFeatures(selectedFeatureText) {
     combinedFilter.push(countryFilter);
   }
 
-  // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
-  console.log(combinedFilter,"combinedFilter");
+  console.log(combinedFilter, "combinedFilter");
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
-
     toggleSidebar("left");
-
     showCollectionItemAndPopup(ID);
   } else {
     toggleSidebar("left");
   }
 }
 
-
-
 $(".locations-map_wrapper").removeClass("is--show");
 
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiM3JkY2l0eSIsImEiOiJjbHFjMThzNmswMG81MmlwNHp4am1kaTB6In0.rC8jN0vCOiwyZkm_5mSlmA";
+mapboxgl.accessToken = "your-mapbox-access-token";
 
 let mapLocations = {
   type: "FeatureCollection",
@@ -178,16 +153,11 @@ function getGeoData() {
     let coordinates = [locationLong, locationLat];
     let locationID = location.querySelector("#locationID").value;
 
-    let featureItems = location.querySelectorAll(
-      ".collection-list .feature-item"
-    );
+    let featureItems = location.querySelectorAll(".collection-list .feature-item");
 
     let features = [];
 
-    let country = $(location)
-      .find(".locations-map_population-wrapper div")
-      .text()
-      .trim();
+    let country = $(location).find(".locations-map_population-wrapper div").text().trim();
 
     if (!uniqueCountries.includes(country)) {
       uniqueCountries.push(country);
@@ -220,12 +190,7 @@ function getGeoData() {
       },
     };
 
-    if (
-      !mapLocations.features.some(
-        (existingGeoData) =>
-          JSON.stringify(existingGeoData) === JSON.stringify(geoData)
-      )
-    ) {
+    if (!mapLocations.features.some((existingGeoData) => JSON.stringify(existingGeoData) === JSON.stringify(geoData))) {
       mapLocations.features.push(geoData);
     }
   });
@@ -246,46 +211,37 @@ function closeSidebar() {
 }
 
 getGeoData();
+
 function searchByName() {
-  // Get the search input value and convert it to lowercase
   const searchInput = document.getElementById("searchByName").value.toLowerCase();
 
-  // Check if the search input is empty
   if (searchInput.trim() === "") {
-    // If it's empty, you can choose to do nothing or show a message
-    // For example, you can alert the user or log a message to the console
     alert("Please enter a search term.");
-    return; // Exit the function without further execution
+    return;
   }
 
-  // Filter the features based on the search input
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.description.toLowerCase().includes(searchInput)
   );
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
-
-    // Show the sidebar and collection item
     toggleSidebar("left");
     showCollectionItemAndPopup(ID);
-
-    // Update the map data source with the filtered features
     map.getSource("locations").setData({
       type: "FeatureCollection",
       features: filteredFeatures,
     });
   } else {
-    // If no matching locations found, show an alert and reset the map to default locations
     alert("No matching locations found.");
     map.getSource("locations").setData(mapLocations);
   }
 }
+
 function addMapPoints() {
   map.addSource("locations", {
     type: "geojson",
     data: mapLocations,
- 
     clusterMaxZoom: 14,
     clusterRadius: 50,
   });
@@ -310,7 +266,6 @@ function addPopup(e) {
   const coordinates = e.features[0].geometry.coordinates.slice();
   const description = e.features[0].properties.description;
 
-  // Close the existing popup if it's open
   if (currentPopup) {
     currentPopup.remove();
   }
@@ -319,23 +274,16 @@ function addPopup(e) {
     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
   }
 
-  currentPopup = new mapboxgl.Popup()
-    .setLngLat(coordinates)
-    .setHTML(description)
-    .addTo(map);
+  currentPopup = new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
 }
 
 map.on("click", "locations", (e) => {
   addPopup(e);
 });
 
-
 map.on("click", "locations", (e) => {
-  
   const feature = e.features[0];
- 
   const ID = feature.properties.arrayID;
- 
   addPopup(e);
   $(".locations-map_wrapper").addClass("is--show");
 
@@ -345,7 +293,6 @@ map.on("click", "locations", (e) => {
 
   $(".locations-map_item").eq(ID).addClass("is--show");
   addPopup(e);
-
 });
 
 map.on("mouseenter", "locations", (e) => {
@@ -358,107 +305,138 @@ map.on("mouseenter", "locations", (e) => {
     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
   }
 
-  popup.setLngLat(coordinates).setHTML(description).addTo(map);
+  popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+  })
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
 });
 
 map.on("mouseleave", "locations", () => {
   map.getCanvas().style.cursor = "";
-  popup.remove();
+  if (popup) {
+    popup.remove();
+    popup = null;
+  }
 });
 
-//randomizing points
-  let previousFeatureIndex = -1;
+map.on("click", "clusters", (e) => {
+  const features = map.queryRenderedFeatures(e.point, {
+    layers: ["clusters"],
+  });
+  const clusterId = features[0].properties.cluster_id;
+  map.getSource("locations").getClusterExpansionZoom(clusterId, (err, zoom) => {
+    if (err) return;
 
-  function getRandomPoint() {
-    const features = mapLocations.features;
-    let newFeatureIndex = previousFeatureIndex;
+    map.easeTo({
+      center: features[0].geometry.coordinates,
+      zoom: zoom,
+    });
+  });
+});
 
-    if (features.length > 1) {
-      while (newFeatureIndex === previousFeatureIndex) {
-        newFeatureIndex = Math.floor(Math.random() * features.length);
-      }
-    } else {
-      newFeatureIndex = 0;
+map.on("mouseenter", "clusters", () => {
+  map.getCanvas().style.cursor = "pointer";
+});
+
+map.on("mouseleave", "clusters", () => {
+  map.getCanvas().style.cursor = "";
+});
+
+function randomSelection() {
+  if (mapLocations.features.length === 0) {
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * mapLocations.features.length);
+  const ID = mapLocations.features[randomIndex].properties.arrayID;
+
+  $(".locations-map_wrapper").addClass("is--show");
+  showCollectionItemAndPopup(ID);
+}
+
+function toggleSidebar(id) {
+  const sidebar = document.getElementById(id);
+
+  if (!sidebar) {
+    return;
+  }
+
+  const collapsed = sidebar.classList.contains("collapsed");
+
+  if (collapsed) {
+    sidebar.classList.remove("collapsed");
+    const padding = {};
+    padding[id] = 180;
+    map.easeTo({
+      padding: padding,
+      duration: 1000,
+    });
+  } else {
+    sidebar.classList.add("collapsed");
+    const padding = {};
+    padding[id] = 0;
+    map.easeTo({
+      padding: padding,
+      duration: 1000,
+    });
+  }
+}
+
+function showCollectionItemAndPopup(ID) {
+  $(".locations-map_wrapper").addClass("is--show");
+  if ($(".locations-map_item.is--show").length) {
+    $(".locations-map_item").removeClass("is--show");
+  }
+
+  $(".locations-map_item").eq(ID).addClass("is--show");
+
+  const selectedFeature = mapLocations.features.find(
+    (feature) => feature.properties.arrayID === ID
+  );
+
+  if (selectedFeature) {
+    map.flyTo({ center: selectedFeature.geometry.coordinates, zoom: 5 });
+
+    if (currentPopup) {
+      currentPopup.remove();
     }
 
-    previousFeatureIndex = newFeatureIndex;
-    return features[newFeatureIndex];
+    currentPopup = new mapboxgl.Popup()
+      .setLngLat(selectedFeature.geometry.coordinates)
+      .setHTML(selectedFeature.properties.description)
+      .addTo(map);
   }
+}
 
-  function simulateClick(feature) {
-    const coordinates = feature.geometry.coordinates;
-    const popupEvent = {
-      lngLat: {
-        lng: coordinates[0],
-        lat: coordinates[1],
-      },
-      features: [feature],
-    };
-    map.fire("click", popupEvent);
-    console.log("Coordinates:", coordinates);
+document.querySelector(".searchbar__button").addEventListener("click", function () {
+  searchByName();
+});
+
+document.querySelector(".searchbar__input").addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
+    searchByName();
   }
+});
 
-  function showWhiteDiv() {
-    const whiteDiv = $('<div id="whiteDiv"></div>').css({
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "white",
-      zIndex: 9999,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    });
+document.getElementById("randomSelectionButton").addEventListener("click", function () {
+  randomSelection();
+});
 
-    const iframe = $('<iframe id="overlayIframe" src="https://www.worldometers.info/coronavirus/"></iframe>').css({
-      width: "100%",
-      height: "100%",
-      border: "none",
-    });
-
-    whiteDiv.append(iframe);
-    $("body").append(whiteDiv);
-  }
-
-  function hideWhiteDiv() {
-    $("#whiteDiv").remove();
-  }
-
-  function repeatSimulation() {
-    const feature = getRandomPoint();
-    simulateClick(feature);
-
-    setTimeout(() => {
-      showWhiteDiv();
-      setTimeout(() => {
-        hideWhiteDiv();
-        const nextFeature = getRandomPoint();
-        simulateClick(nextFeature);
-        repeatSimulation();
-      }, 5000);
-    }, 5000);
-  }
-
-  repeatSimulation();
- function showCollectionItemAndPopup(ID) {
-    $(".locations-map_wrapper").addClass("is--show");
-
-    if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
-    }
-
-    $(".locations-map_item").eq(ID).addClass("is--show");
-  }
-//end randomizing
-map.on("load", function (e) {
-
+map.on("load", () => {
   addMapPoints();
 });
-let defaultMapLocations = mapLocations.features;
-$(".close-block").click(function () {
-  $(".locations-map_wrapper").removeClass("is--show");
+
+map.on("load", function () {
+  if (window.innerWidth <= 480) {
+    toggleSidebar("left");
+  }
+});
+
+$(".locations-map_wrapper").addClass("is--show");
+
 });
 
 const popup = new mapboxgl.Popup({
