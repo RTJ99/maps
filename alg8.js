@@ -442,6 +442,15 @@ map.on("mouseleave", "locations", () => {
   }
 
   repeatSimulation();
+ function showCollectionItemAndPopup(ID) {
+    $(".locations-map_wrapper").addClass("is--show");
+
+    if ($(".locations-map_item.is--show").length) {
+      $(".locations-map_item").removeClass("is--show");
+    }
+
+    $(".locations-map_item").eq(ID).addClass("is--show");
+  }
 //end randomizing
 map.on("load", function (e) {
 
