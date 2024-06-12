@@ -366,8 +366,57 @@ map.on("mouseleave", "locations", () => {
   popup.remove();
 });
 
+//randomizing points
+function getRandomPoint() {
+    const features = mapLocations.features;
+    return features[Math.floor(Math.random() * features.length)];
+  }
 
+  function simulateClick(feature) {
+    const coordinates = feature.geometry.coordinates;
+    const popupEvent = {
+      lngLat: {
+        lng: coordinates[0],
+        lat: coordinates[1],
+      },
+      features: [feature],
+    };
+    map.fire("click", popupEvent);
+  }
 
+  function showWhiteDiv() {
+    const whiteDiv = $('<div id="whiteDiv"></div>').css({
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "white",
+      zIndex: 9999,
+    });
+    $("body").append(whiteDiv);
+  }
+
+  function hideWhiteDiv() {
+    $("#whiteDiv").remove();
+  }
+
+  function repeatSimulation() {
+    const feature = getRandomPoint();
+    simulateClick(feature);
+
+    setTimeout(showWhiteDiv, 5000);
+
+    setTimeout(() => {
+      hideWhiteDiv();
+      const nextFeature = getRandomPoint();
+      simulateClick(nextFeature);
+      repeatSimulation();
+    }, 10000);
+  }
+
+  repeatSimulation();
+//end randomizing
 map.on("load", function (e) {
 
   addMapPoints();
@@ -475,6 +524,7 @@ function clearFilters() {
   countAndLogPoints();
   logAllPoints();
 }
+
 
 
 function filterMapFeatures(selectedFeatureText) {
