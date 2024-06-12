@@ -72,6 +72,7 @@ function applyFilters() {
     combinedFilter.push(countriesFilter);
   }
 
+  // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
 }
@@ -335,7 +336,6 @@ map.on("click", "locations", (e) => {
   const ID = feature.properties.arrayID;
  
   addPopup(e);
-    showCollectionItemAndPopup(ID);
   $(".locations-map_wrapper").addClass("is--show");
 
   if ($(".locations-map_item.is--show").length) {
@@ -368,17 +368,21 @@ map.on("mouseleave", "locations", () => {
 //randomizing points
   let previousFeatureIndex = -1;
 
- function randomSelection() {
-  if (mapLocations.features.length === 0) {
-    return;
+  function getRandomPoint() {
+    const features = mapLocations.features;
+    let newFeatureIndex = previousFeatureIndex;
+
+    if (features.length > 1) {
+      while (newFeatureIndex === previousFeatureIndex) {
+        newFeatureIndex = Math.floor(Math.random() * features.length);
+      }
+    } else {
+      newFeatureIndex = 0;
+    }
+
+    previousFeatureIndex = newFeatureIndex;
+    return features[newFeatureIndex];
   }
-
-  const randomIndex = Math.floor(Math.random() * mapLocations.features.length);
-  const ID = mapLocations.features[randomIndex].properties.arrayID;
-
-  $(".locations-map_wrapper").addClass("is--show");
-  showCollectionItemAndPopup(ID);  // Added line
-}
 
   function simulateClick(feature) {
     const coordinates = feature.geometry.coordinates;
@@ -422,14 +426,14 @@ map.on("mouseleave", "locations", () => {
   }
 
   function repeatSimulation() {
-    const feature = randomSelection();
+    const feature = getRandomPoint();
     simulateClick(feature);
 
     setTimeout(() => {
       showWhiteDiv();
       setTimeout(() => {
         hideWhiteDiv();
-        const nextFeature = randomSelection();
+        const nextFeature = getRandomPoint();
         simulateClick(nextFeature);
         repeatSimulation();
       }, 5000);
@@ -437,32 +441,15 @@ map.on("mouseleave", "locations", () => {
   }
 
   repeatSimulation();
-function showCollectionItemAndPopup(ID) {
-  $(".locations-map_wrapper").addClass("is--show");
-  if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
-  }
+ function showCollectionItemAndPopup(ID) {
+    $(".locations-map_wrapper").addClass("is--show");
 
-  $(".locations-map_item").eq(ID).addClass("is--show");
-
-  const selectedFeature = mapLocations.features.find(
-    (feature) => feature.properties.arrayID === ID
-  );
-
-  if (selectedFeature) {
-    map.flyTo({ center: selectedFeature.geometry.coordinates, zoom: 5 });
-
-    if (currentPopup) {
-      currentPopup.remove();
+    if ($(".locations-map_item.is--show").length) {
+      $(".locations-map_item").removeClass("is--show");
     }
 
-    currentPopup = new mapboxgl.Popup()
-      .setLngLat(selectedFeature.geometry.coordinates)
-      .setHTML(selectedFeature.properties.description)
-      .addTo(map);
+    $(".locations-map_item").eq(ID).addClass("is--show");
   }
-}
-
 //end randomizing
 map.on("load", function (e) {
 
@@ -505,33 +492,20 @@ function showCollectionItemAndPopup(ID) {
   $(".locations-map_item").eq(ID).addClass("is--show");
 }
 function toggleSidebar(id) {
-  const sidebar = document.getElementById(id);
+  const elem = document.getElementById(id);
+  const collapsed = elem.classList.toggle("collapsed");
+  const padding = {};
 
-  if (!sidebar) {
-    return;
-  }
+  padding[id] = collapsed ? 0 : 300;
 
-  const collapsed = sidebar.classList.contains("collapsed");
+  map.easeTo({
+    padding: padding,
+    duration: 1000,
+  });
 
-  if (collapsed) {
-    sidebar.classList.remove("collapsed");
-    const padding = {};
-    padding[id] = 180;
-    map.easeTo({
-      padding: padding,
-      duration: 1000,
-    });
-  } else {
-    sidebar.classList.add("collapsed");
-    const padding = {};
-    padding[id] = 0;
-    map.easeTo({
-      padding: padding,
-      duration: 1000,
-    });
-  }
+  elem.classList.remove("collapsed");
+  elem.style.display = "block";
 }
-
 function resetMap() {
   // Reset map to initial state
   map.easeTo({
