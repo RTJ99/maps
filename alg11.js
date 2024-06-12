@@ -368,21 +368,17 @@ map.on("mouseleave", "locations", () => {
 //randomizing points
   let previousFeatureIndex = -1;
 
-  function getRandomPoint() {
-    const features = mapLocations.features;
-    let newFeatureIndex = previousFeatureIndex;
-
-    if (features.length > 1) {
-      while (newFeatureIndex === previousFeatureIndex) {
-        newFeatureIndex = Math.floor(Math.random() * features.length);
-      }
-    } else {
-      newFeatureIndex = 0;
-    }
-
-    previousFeatureIndex = newFeatureIndex;
-    return features[newFeatureIndex];
+ function randomSelection() {
+  if (mapLocations.features.length === 0) {
+    return;
   }
+
+  const randomIndex = Math.floor(Math.random() * mapLocations.features.length);
+  const ID = mapLocations.features[randomIndex].properties.arrayID;
+
+  $(".locations-map_wrapper").addClass("is--show");
+  showCollectionItemAndPopup(ID);  // Added line
+}
 
   function simulateClick(feature) {
     const coordinates = feature.geometry.coordinates;
@@ -441,15 +437,32 @@ map.on("mouseleave", "locations", () => {
   }
 
   repeatSimulation();
- function showCollectionItemAndPopup(ID) {
-    $(".locations-map_wrapper").addClass("is--show");
+function showCollectionItemAndPopup(ID) {
+  $(".locations-map_wrapper").addClass("is--show");
+  if ($(".locations-map_item.is--show").length) {
+    $(".locations-map_item").removeClass("is--show");
+  }
 
-    if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
+  $(".locations-map_item").eq(ID).addClass("is--show");
+
+  const selectedFeature = mapLocations.features.find(
+    (feature) => feature.properties.arrayID === ID
+  );
+
+  if (selectedFeature) {
+    map.flyTo({ center: selectedFeature.geometry.coordinates, zoom: 5 });
+
+    if (currentPopup) {
+      currentPopup.remove();
     }
 
-    $(".locations-map_item").eq(ID).addClass("is--show");
+    currentPopup = new mapboxgl.Popup()
+      .setLngLat(selectedFeature.geometry.coordinates)
+      .setHTML(selectedFeature.properties.description)
+      .addTo(map);
   }
+}
+
 //end randomizing
 map.on("load", function (e) {
 
@@ -492,20 +505,33 @@ function showCollectionItemAndPopup(ID) {
   $(".locations-map_item").eq(ID).addClass("is--show");
 }
 function toggleSidebar(id) {
-  const elem = document.getElementById(id);
-  const collapsed = elem.classList.toggle("collapsed");
-  const padding = {};
+  const sidebar = document.getElementById(id);
 
-  padding[id] = collapsed ? 0 : 300;
+  if (!sidebar) {
+    return;
+  }
 
-  map.easeTo({
-    padding: padding,
-    duration: 1000,
-  });
+  const collapsed = sidebar.classList.contains("collapsed");
 
-  elem.classList.remove("collapsed");
-  elem.style.display = "block";
+  if (collapsed) {
+    sidebar.classList.remove("collapsed");
+    const padding = {};
+    padding[id] = 180;
+    map.easeTo({
+      padding: padding,
+      duration: 1000,
+    });
+  } else {
+    sidebar.classList.add("collapsed");
+    const padding = {};
+    padding[id] = 0;
+    map.easeTo({
+      padding: padding,
+      duration: 1000,
+    });
+  }
 }
+
 function resetMap() {
   // Reset map to initial state
   map.easeTo({
