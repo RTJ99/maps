@@ -395,9 +395,8 @@ map.on("mouseleave", "locations", () => {
       features: [feature],
     };
     map.fire("click", popupEvent);
-    console.log(coordinates,"tytytytyt")
+    console.log("Coordinates:", coordinates);
   }
-
 
   function showWhiteDiv() {
     const whiteDiv = $('<div id="whiteDiv"></div>').css({
@@ -431,14 +430,15 @@ map.on("mouseleave", "locations", () => {
     const feature = getRandomPoint();
     simulateClick(feature);
 
-    setTimeout(showWhiteDiv, 10000);
-
     setTimeout(() => {
-      hideWhiteDiv();
-      const nextFeature = getRandomPoint();
-      simulateClick(nextFeature);
-      repeatSimulation();
-    }, 20000);
+      showWhiteDiv();
+      setTimeout(() => {
+        hideWhiteDiv();
+        const nextFeature = getRandomPoint();
+        simulateClick(nextFeature);
+        repeatSimulation();
+      }, 5000);
+    }, 5000);
   }
 
   repeatSimulation();
