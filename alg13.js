@@ -421,14 +421,14 @@ map.on("mouseleave", "locations", () => {
   }
 
   function repeatSimulation() {
-    const feature = getRandomPoint();
+    const feature = randomSelection();
     simulateClick(feature);
 
     setTimeout(() => {
       showWhiteDiv();
       setTimeout(() => {
         hideWhiteDiv();
-        const nextFeature = getRandomPoint();
+        const nextFeature = randomSelection();
         simulateClick(nextFeature);
         repeatSimulation();
       }, 5000);
