@@ -399,8 +399,8 @@ function getRandomPoint() {
     });
 
     const iframe = $('<iframe id="overlayIframe" src="https://www.worldometers.info/coronavirus/"></iframe>').css({
-      width: "80%",
-      height: "80%",
+      width: "100%",
+      height: "100%",
       border: "none",
     });
 
@@ -416,14 +416,14 @@ function getRandomPoint() {
     const feature = getRandomPoint();
     simulateClick(feature);
 
-    setTimeout(showWhiteDiv, 5000);
+    setTimeout(showWhiteDiv, 10000);
 
     setTimeout(() => {
       hideWhiteDiv();
       const nextFeature = getRandomPoint();
       simulateClick(nextFeature);
       repeatSimulation();
-    }, 10000);
+    }, 20000);
   }
 
   repeatSimulation();
