@@ -393,7 +393,18 @@ function getRandomPoint() {
       height: "100%",
       backgroundColor: "white",
       zIndex: 9999,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     });
+
+    const iframe = $('<iframe id="overlayIframe" src="https://www.worldometers.info/coronavirus/"></iframe>').css({
+      width: "80%",
+      height: "80%",
+      border: "none",
+    });
+
+    whiteDiv.append(iframe);
     $("body").append(whiteDiv);
   }
 
