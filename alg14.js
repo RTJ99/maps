@@ -335,6 +335,7 @@ map.on("click", "locations", (e) => {
   const ID = feature.properties.arrayID;
  
   addPopup(e);
+    showCollectionItemAndPopup(ID);
   $(".locations-map_wrapper").addClass("is--show");
 
   if ($(".locations-map_item.is--show").length) {
