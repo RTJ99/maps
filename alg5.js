@@ -367,9 +367,22 @@ map.on("mouseleave", "locations", () => {
 });
 
 //randomizing points
-function getRandomPoint() {
+ let previousFeature = null;
+
+  function getRandomPoint() {
     const features = mapLocations.features;
-    return features[Math.floor(Math.random() * features.length)];
+    let newFeature = null;
+
+    if (features.length > 1) {
+      do {
+        newFeature = features[Math.floor(Math.random() * features.length)];
+      } while (newFeature === previousFeature);
+    } else {
+      newFeature = features[0];
+    }
+
+    previousFeature = newFeature;
+    return newFeature;
   }
 
   function simulateClick(feature) {
