@@ -72,7 +72,6 @@ function applyFilters() {
     combinedFilter.push(countriesFilter);
   }
 
-  // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
 }
