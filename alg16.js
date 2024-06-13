@@ -436,8 +436,8 @@ map.on("mouseleave", "locations", () => {
         const nextFeature = getRandomPoint();
         simulateClick(nextFeature);
         repeatSimulation();
-      }, 5000);
-    }, 5000);
+      }, 13000);
+    }, 13000);
   }
 
   repeatSimulation();
