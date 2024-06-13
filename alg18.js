@@ -396,36 +396,36 @@ map.on("mouseleave", "locations", () => {
     map.fire("click", popupEvent);
     console.log("Coordinates:", coordinates);
   }
+function showWhiteDiv() {
+  const whiteDiv = $('<div id="whiteDiv"></div>').css({
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "white",
+    zIndex: 9999,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  });
 
-  function showWhiteDiv() {
-    const whiteDiv = $('<div id="whiteDiv"></div>').css({
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "white",
-      zIndex: 9999,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    });
-
-    const iframe = $('
-    <iframe
-        id='overlayIframe'
+  const iframe = $(
+    `<iframe
+        id="overlayIframe"
         width="960"
         height="720"
         src="https://eu-west-1.quicksight.aws.amazon.com/sn/embed/share/accounts/441203537012/dashboards/b5f66df1-41f7-4eb6-ba92-379b2e38ab4f?directory_alias=theroom-trip">
-    </iframe>').css({
-      width: "100%",
-      height: "100%",
-      border: "none",
-    });
+    </iframe>`
+  ).css({
+    width: "100%",
+    height: "100%",
+    border: "none",
+  });
 
-    whiteDiv.append(iframe);
-    $("body").append(whiteDiv);
-  }
+  whiteDiv.append(iframe);
+  $("body").append(whiteDiv);
+}
 
   function hideWhiteDiv() {
     $("#whiteDiv").remove();
