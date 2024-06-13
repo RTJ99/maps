@@ -411,7 +411,13 @@ map.on("mouseleave", "locations", () => {
       alignItems: "center",
     });
 
-    const iframe = $('<iframe id="overlayIframe" src="https://www.worldometers.info/coronavirus/"></iframe>').css({
+    const iframe = $('
+    <iframe
+        id='overlayIframe'
+        width="960"
+        height="720"
+        src="https://eu-west-1.quicksight.aws.amazon.com/sn/embed/share/accounts/441203537012/dashboards/b5f66df1-41f7-4eb6-ba92-379b2e38ab4f?directory_alias=theroom-trip">
+    </iframe>').css({
       width: "100%",
       height: "100%",
       border: "none",
