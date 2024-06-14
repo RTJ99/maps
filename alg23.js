@@ -276,7 +276,6 @@ function getGeoData() {
       }
     });
 
-    createCheckboxes();
     populateCountryDropdown();
   }
 
