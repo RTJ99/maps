@@ -389,6 +389,13 @@ function simulateClick(feature) {
   };
   map.fire("click", popupEvent);
   console.log("Coordinates:", coordinates);
+  const ID = feature.properties.arrayID;
+    $(".locations-map_wrapper").addClass("is--show");
+    if ($(".locations-map_item.is--show").length) {
+      $(".locations-map_item").removeClass("is--show");
+    }
+    $(".locations-map_item").eq(ID).addClass("is--show");
+    addPopup(popupEvent);
 }
 function showWhiteDiv() {
   const whiteDiv = $('<div id="whiteDiv"></div>').css({
