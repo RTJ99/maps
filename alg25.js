@@ -46,58 +46,7 @@ $(function () {
     applyFilters();
   });
 });
-function refreshSidebarContent() {
-  // Clear existing content in the sidebar
-  const sidebar = document.querySelector(".locations-map_wrapper");
-  sidebar.innerHTML = "";
 
-  // Iterate over the updated features in mapLocations
-  mapLocations.features.forEach((feature, index) => {
-    // Create a new sidebar item for each feature
-    const sidebarItem = document.createElement("div");
-    sidebarItem.classList.add("locations-map_item");
-    sidebarItem.dataset.id = feature.properties.arrayID;
-
-    // Add content to the sidebar item (customize as needed)
-    sidebarItem.innerHTML = `
-      <h3>${feature.properties.description}</h3>
-      <p>Country: ${feature.properties.country}</p>
-      <p>Features: ${feature.properties.features.join(", ")}</p>
-    `;
-
-    // Append the sidebar item to the sidebar
-    sidebar.appendChild(sidebarItem);
-  });
-
-  // Reattach event listeners if needed
-  attachSidebarEventListeners();
-}
-
-function attachSidebarEventListeners() {
-  // Example: Attach click event listeners to the sidebar items
-  const sidebarItems = document.querySelectorAll(".locations-map_item");
-  sidebarItems.forEach((item) => {
-    item.addEventListener("click", (e) => {
-      const id = e.currentTarget.dataset.id;
-      showCollectionItemAndPopup(id);
-    });
-  });
-}
-
-// Call this function whenever the points on the map change
-function updatePoints() {
-  // Update the map locations
-  getGeoData();
-
-  // Refresh the sidebar content
-  refreshSidebarContent();
-}
-
-// Example usage:
-// Simulate point changes and update the sidebar
-setTimeout(() => {
-  updatePoints();
-}, 1000);
 function applyFilters() {
   const selectedFeatures = $(".featureCheckbox:checked")
     .map(function () {
@@ -128,7 +77,6 @@ function applyFilters() {
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
-    refreshSidebarContent();
 }
 
 function filterMapFeatures(selectedFeatureText) {
@@ -214,72 +162,68 @@ let listLocations = document.getElementById("location-list").childNodes;
 
 let uniqueCountries = [];
 function getGeoData() {
-    uniqueFeatureTexts.clear();
-    uniqueCountries = [];
+  uniqueFeatureTexts.clear();
+  uniqueCountries = [];
 
-    listLocations.forEach(function (location, i) {
-      let locationLat = location.querySelector("#locationLatitude").value;
-      let locationLong = location.querySelector("#locationLongitude").value;
-      let locationInfo = location.querySelector(".locations-map_card").innerHTML;
-      let coordinates = [locationLong, locationLat];
-      let locationID = location.querySelector("#locationID").value;
+  listLocations.forEach(function (location, i) {
+    let locationLat = location.querySelector("#locationLatitude").value;
+    let locationLong = location.querySelector("#locationLongitude").value;
+    let locationInfo = location.querySelector(".locations-map_card").innerHTML;
+    let coordinates = [locationLong, locationLat];
+    let locationID = location.querySelector("#locationID").value;
 
-      let featureItems = location.querySelectorAll(
-        ".collection-list .feature-item"
-      );
+    let featureItems = location.querySelectorAll(
+      ".collection-list .feature-item"
+    );
 
-      let features = [];
+    let features = [];
 
-      let country = $(location)
-        .find(".locations-map_population-wrapper div")
-        .text()
-        .trim();
+    let country = $(location)
+      .find(".locations-map_population-wrapper div")
+      .text()
+      .trim();
 
-      if (!uniqueCountries.includes(country)) {
-        uniqueCountries.push(country);
-      }
-      console.log(uniqueCountries, "poi");
+    if (!uniqueCountries.includes(country)) {
+      uniqueCountries.push(country);
+    }
+    console.log(uniqueCountries, "poi");
 
-      featureItems.forEach(function (item) {
-        let text = item.querySelector("div:nth-child(2)").textContent;
-        features.push(text);
+    featureItems.forEach(function (item) {
+      let text = item.querySelector("div:nth-child(2)").textContent;
+      features.push(text);
 
-        if (!uniqueFeatureTexts.has(text)) {
-          uniqueFeatureTexts.add(text);
-        }
-      });
-
-      let arrayID = i;
-
-      let geoData = {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: coordinates,
-        },
-        properties: {
-          id: locationID,
-          description: locationInfo,
-          arrayID: arrayID,
-          features: features,
-          country: country,
-        },
-      };
-
-      if (
-        !mapLocations.features.some(
-          (existingGeoData) =>
-            JSON.stringify(existingGeoData) === JSON.stringify(geoData)
-        )
-      ) {
-        mapLocations.features.push(geoData);
+      if (!uniqueFeatureTexts.has(text)) {
+        uniqueFeatureTexts.add(text);
       }
     });
 
-   
-  }
+    let arrayID = i;
 
+    let geoData = {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: coordinates,
+      },
+      properties: {
+        id: locationID,
+        description: locationInfo,
+        arrayID: arrayID,
+        features: features,
+        country: country,
+      },
+    };
 
+    if (
+      !mapLocations.features.some(
+        (existingGeoData) =>
+          JSON.stringify(existingGeoData) === JSON.stringify(geoData)
+      )
+    ) {
+      mapLocations.features.push(geoData);
+    }
+  });
+}
 function closeSidebar() {
   const leftSidebar = document.getElementById("left");
   if (leftSidebar.classList.contains("collapsed")) {
@@ -358,26 +302,24 @@ function addMapPoints() {
 
 let currentPopup;
 
+function addPopup(e) {
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const description = e.features[0].properties.description;
 
-  function addPopup(e) {
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const description = e.features[0].properties.description;
-
-    // Close the existing popup if it's open
-    if (currentPopup) {
-      currentPopup.remove();
-    }
-
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
-
-    currentPopup = new mapboxgl.Popup()
-      .setLngLat(coordinates)
-      .setHTML(description)
-      .addTo(map);
+  // Close the existing popup if it's open
+  if (currentPopup) {
+    currentPopup.remove();
   }
 
+  while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+  }
+
+  currentPopup = new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+}
 
 map.on("click", "locations", (e) => {
   addPopup(e);
@@ -418,67 +360,96 @@ map.on("mouseleave", "locations", () => {
 });
 
 //randomizing points
-// Randomizing points
-  let previousFeatureIndex = -1;
+let previousFeatureIndex = -1;
 
-  function getRandomPoint() {
-    const features = mapLocations.features;
-    let newFeatureIndex = previousFeatureIndex;
+function getRandomPoint() {
+  const features = mapLocations.features;
+  let newFeatureIndex = previousFeatureIndex;
 
-    if (features.length > 1) {
-      while (newFeatureIndex === previousFeatureIndex) {
-        newFeatureIndex = Math.floor(Math.random() * features.length);
-      }
-    } else {
-      newFeatureIndex = 0;
+  if (features.length > 1) {
+    while (newFeatureIndex === previousFeatureIndex) {
+      newFeatureIndex = Math.floor(Math.random() * features.length);
     }
-
-    previousFeatureIndex = newFeatureIndex;
-    return features[newFeatureIndex];
+  } else {
+    newFeatureIndex = 0;
   }
 
-  function simulateClick(feature) {
-    const coordinates = feature.geometry.coordinates;
-    const popupEvent = {
-      lngLat: {
-        lng: coordinates[0],
-        lat: coordinates[1],
-      },
-      features: [feature],
-    };
-    map.fire("click", popupEvent);
-    console.log("Coordinates:", coordinates);
-  }
+  previousFeatureIndex = newFeatureIndex;
+  return features[newFeatureIndex];
+}
 
-  function repeatSimulation() {
-    const feature = getRandomPoint();
-    simulateClick(feature);
+function simulateClick(feature) {
+  const coordinates = feature.geometry.coordinates;
+  const popupEvent = {
+    lngLat: {
+      lng: coordinates[0],
+      lat: coordinates[1],
+    },
+    features: [feature],
+  };
+  map.fire("click", popupEvent);
+  console.log("Coordinates:", coordinates);
+}
+function showWhiteDiv() {
+  const whiteDiv = $('<div id="whiteDiv"></div>').css({
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "white",
+    zIndex: 9999,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  });
 
+  const iframe = $(
+    `<iframe
+        id="overlayIframe"
+        width="960"
+        height="720"
+        src="https://eu-west-1.quicksight.aws.amazon.com/sn/embed/share/accounts/441203537012/dashboards/b5f66df1-41f7-4eb6-ba92-379b2e38ab4f?directory_alias=theroom-trip">
+    </iframe>`
+  ).css({
+    width: "100%",
+    height: "100%",
+    border: "none",
+  });
+
+  whiteDiv.append(iframe);
+  $("body").append(whiteDiv);
+}
+
+function hideWhiteDiv() {
+  $("#whiteDiv").remove();
+}
+
+function repeatSimulation() {
+  const feature = getRandomPoint();
+  simulateClick(feature);
+
+  setTimeout(() => {
+    showWhiteDiv();
     setTimeout(() => {
-      showWhiteDiv();
-      setTimeout(() => {
-        hideWhiteDiv();
-        const nextFeature = getRandomPoint();
-        simulateClick(nextFeature);
-        repeatSimulation();
-      }, 13000);
+      hideWhiteDiv();
+      const nextFeature = getRandomPoint();
+      simulateClick(nextFeature);
+      repeatSimulation();
     }, 13000);
+  }, 13000);
+}
+
+repeatSimulation();
+function showCollectionItemAndPopup(ID) {
+  $(".locations-map_wrapper").addClass("is--show");
+
+  if ($(".locations-map_item.is--show").length) {
+    $(".locations-map_item").removeClass("is--show");
   }
 
-  repeatSimulation();
-
-  function showCollectionItemAndPopup(ID) {
-    $(".locations-map_wrapper").addClass("is--show");
-
-    if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
-    }
-
-    $(".locations-map_item").eq(ID).addClass("is--show");
-  }
-
-  // End randomizing
-
+  $(".locations-map_item").eq(ID).addClass("is--show");
+}
 //end randomizing
 map.on("load", function (e) {
   addMapPoints();
@@ -520,21 +491,20 @@ function showCollectionItemAndPopup(ID) {
   $(".locations-map_item").eq(ID).addClass("is--show");
 }
 function toggleSidebar(id) {
-    const elem = document.getElementById(id);
-    const collapsed = elem.classList.toggle("collapsed");
-    const padding = {};
+  const elem = document.getElementById(id);
+  const collapsed = elem.classList.toggle("collapsed");
+  const padding = {};
 
-    padding[id] = collapsed ? 0 : 300;
+  padding[id] = collapsed ? 0 : 300;
 
-    map.easeTo({
-      padding: padding,
-      duration: 1000,
-    });
+  map.easeTo({
+    padding: padding,
+    duration: 1000,
+  });
 
-    elem.classList.remove("collapsed");
-    elem.style.display = "block";
-  }
-
+  elem.classList.remove("collapsed");
+  elem.style.display = "block";
+}
 function resetMap() {
   // Reset map to initial state
   map.easeTo({
