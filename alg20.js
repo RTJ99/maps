@@ -84,11 +84,58 @@ $(function () {
     refreshSidebarContent();
   }
 
-  function refreshSidebarContent() {
-    // Code to refresh the sidebar content based on the current points
-    // This could involve re-rendering the list of locations, updating the details, etc.
-    console.log("Sidebar content refreshed");
-  }
+function refreshSidebarContent() {
+  // Clear existing content in the sidebar
+  const sidebar = document.querySelector(".locations-map_wrapper");
+  sidebar.innerHTML = "";
+
+  // Iterate over the updated features in mapLocations
+  mapLocations.features.forEach((feature, index) => {
+    // Create a new sidebar item for each feature
+    const sidebarItem = document.createElement("div");
+    sidebarItem.classList.add("locations-map_item");
+    sidebarItem.dataset.id = feature.properties.arrayID;
+
+    // Add content to the sidebar item (customize as needed)
+    sidebarItem.innerHTML = `
+      <h3>${feature.properties.description}</h3>
+      <p>Country: ${feature.properties.country}</p>
+      <p>Features: ${feature.properties.features.join(", ")}</p>
+    `;
+
+    // Append the sidebar item to the sidebar
+    sidebar.appendChild(sidebarItem);
+  });
+
+  // Reattach event listeners if needed
+  attachSidebarEventListeners();
+}
+
+function attachSidebarEventListeners() {
+  // Example: Attach click event listeners to the sidebar items
+  const sidebarItems = document.querySelectorAll(".locations-map_item");
+  sidebarItems.forEach((item) => {
+    item.addEventListener("click", (e) => {
+      const id = e.currentTarget.dataset.id;
+      showCollectionItemAndPopup(id);
+    });
+  });
+}
+
+// Call this function whenever the points on the map change
+function updatePoints() {
+  // Update the map locations
+  getGeoData();
+
+  // Refresh the sidebar content
+  refreshSidebarContent();
+}
+
+// Example usage:
+// Simulate point changes and update the sidebar
+setTimeout(() => {
+  updatePoints();
+}, 1000);
 
   function getGeoData() {
     uniqueFeatureTexts.clear();
