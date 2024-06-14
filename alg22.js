@@ -535,7 +535,7 @@ function toggleSidebar(id) {
     elem.classList.remove("collapsed");
     elem.style.display = "block";
   }
-});
+
 function resetMap() {
   // Reset map to initial state
   map.easeTo({
