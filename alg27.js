@@ -443,8 +443,8 @@ function repeatSimulation() {
       const nextFeature = getRandomPoint();
       simulateClick(nextFeature);
       repeatSimulation();
-    }, 13000);
-  }, 13000);
+    }, 30000);
+  }, 30000);
 }
 
 repeatSimulation();
