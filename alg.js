@@ -1,6 +1,7 @@
+
 $(function () {
   // something
-  $("#countryDropdown").select2({
+   $("#countryDropdown").select2({
     placeholder: "Choose Locations",
     allowClear: true,
   });
@@ -48,11 +49,9 @@ $(function () {
 });
 
 function applyFilters() {
-  const selectedFeatures = $(".featureCheckbox:checked")
-    .map(function () {
-      return $(this).val();
-    })
-    .get();
+  const selectedFeatures = $(".featureCheckbox:checked").map(function () {
+    return $(this).val();
+  }).get();
 
   const selectedCountries = $("#countryDropdown").val();
 
@@ -79,7 +78,12 @@ function applyFilters() {
   map.setFilter("clusters", combinedFilter);
 }
 
+
+
+
+
 function filterMapFeatures(selectedFeatureText) {
+ 
   const filteredFeatures = mapLocations.features.filter((feature) =>
     feature.properties.features.includes(selectedFeatureText)
   );
@@ -117,7 +121,7 @@ function filterMapFeatures(selectedFeatureText) {
   // Apply the combined filter to both clusters and locations
   map.setFilter("locations", combinedFilter);
   map.setFilter("clusters", combinedFilter);
-  console.log(combinedFilter, "combinedFilter");
+  console.log(combinedFilter,"combinedFilter");
 
   if (filteredFeatures.length > 0) {
     const ID = filteredFeatures[0].properties.arrayID;
@@ -129,6 +133,8 @@ function filterMapFeatures(selectedFeatureText) {
     toggleSidebar("left");
   }
 }
+
+
 
 $(".locations-map_wrapper").removeClass("is--show");
 
@@ -242,9 +248,7 @@ function closeSidebar() {
 getGeoData();
 function searchByName() {
   // Get the search input value and convert it to lowercase
-  const searchInput = document
-    .getElementById("searchByName")
-    .value.toLowerCase();
+  const searchInput = document.getElementById("searchByName").value.toLowerCase();
 
   // Check if the search input is empty
   if (searchInput.trim() === "") {
@@ -281,7 +285,7 @@ function addMapPoints() {
   map.addSource("locations", {
     type: "geojson",
     data: mapLocations,
-
+ 
     clusterMaxZoom: 14,
     clusterRadius: 50,
   });
@@ -325,11 +329,13 @@ map.on("click", "locations", (e) => {
   addPopup(e);
 });
 
+
 map.on("click", "locations", (e) => {
+  
   const feature = e.features[0];
-
+ 
   const ID = feature.properties.arrayID;
-
+ 
   addPopup(e);
   $(".locations-map_wrapper").addClass("is--show");
 
@@ -339,6 +345,7 @@ map.on("click", "locations", (e) => {
 
   $(".locations-map_item").eq(ID).addClass("is--show");
   addPopup(e);
+
 });
 
 map.on("mouseenter", "locations", (e) => {
@@ -359,106 +366,10 @@ map.on("mouseleave", "locations", () => {
   popup.remove();
 });
 
-//randomizing points
-let previousFeatureIndex = -1;
 
-function getRandomPoint() {
-  const features = mapLocations.features;
-  let newFeatureIndex = previousFeatureIndex;
 
-  if (features.length > 1) {
-    while (newFeatureIndex === previousFeatureIndex) {
-      newFeatureIndex = Math.floor(Math.random() * features.length);
-    }
-  } else {
-    newFeatureIndex = 0;
-  }
-
-  previousFeatureIndex = newFeatureIndex;
-  return features[newFeatureIndex];
-}
-
-function simulateClick(feature) {
-  const coordinates = feature.geometry.coordinates;
-  const popupEvent = {
-    lngLat: {
-      lng: coordinates[0],
-      lat: coordinates[1],
-    },
-    features: [feature],
-  };
-  map.fire("click", popupEvent);
-  console.log("Coordinates:", coordinates);
-  const ID = feature.properties.arrayID;
-    $(".locations-map_wrapper").addClass("is--show");
-    if ($(".locations-map_item.is--show").length) {
-      $(".locations-map_item").removeClass("is--show");
-    }
-    $(".locations-map_item").eq(ID).addClass("is--show");
-    addPopup(popupEvent);
-}
-function showWhiteDiv() {
-  const whiteDiv = $('<div id="whiteDiv"></div>').css({
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "white",
-    zIndex: 9999,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  });
-
-  const iframe = $(
-    `<iframe
-        id="overlayIframe"
-        width="960"
-        height="720"
-        src="https://eu-west-1.quicksight.aws.amazon.com/sn/embed/share/accounts/441203537012/dashboards/b5f66df1-41f7-4eb6-ba92-379b2e38ab4f?directory_alias=theroom-trip">
-    </iframe>`
-  ).css({
-    width: "100%",
-    height: "100%",
-    border: "none",
-  });
-
-  whiteDiv.append(iframe);
-  $("body").append(whiteDiv);
-}
-
-function hideWhiteDiv() {
-  $("#whiteDiv").remove();
-}
-
-function repeatSimulation() {
-  const feature = getRandomPoint();
-  simulateClick(feature);
-
-  setTimeout(() => {
-    showWhiteDiv();
-    setTimeout(() => {
-      hideWhiteDiv();
-      const nextFeature = getRandomPoint();
-      simulateClick(nextFeature);
-      repeatSimulation();
-    }, 30000);
-  }, 30000);
-}
-
-repeatSimulation();
-function showCollectionItemAndPopup(ID) {
-  $(".locations-map_wrapper").addClass("is--show");
-
-  if ($(".locations-map_item.is--show").length) {
-    $(".locations-map_item").removeClass("is--show");
-  }
-
-  $(".locations-map_item").eq(ID).addClass("is--show");
-}
-//end randomizing
 map.on("load", function (e) {
+
   addMapPoints();
 });
 let defaultMapLocations = mapLocations.features;
@@ -564,6 +475,7 @@ function clearFilters() {
   countAndLogPoints();
   logAllPoints();
 }
+
 
 function filterMapFeatures(selectedFeatureText) {
   const filteredFeatures = mapLocations.features.filter((feature) =>
